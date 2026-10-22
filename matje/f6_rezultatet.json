@@ -1,0 +1,31 @@
+{
+  "shpejtesia": {
+    "64_bajte": {
+      "kriptimi_bajte_s": 61574,
+      "dekriptimi_bajte_s": 59601,
+      "shtesa_bajte": 64
+    },
+    "1024_bajte": {
+      "kriptimi_bajte_s": 141226,
+      "dekriptimi_bajte_s": 135511,
+      "shtesa_bajte": 64
+    },
+    "65536_bajte": {
+      "kriptimi_bajte_s": 154244,
+      "dekriptimi_bajte_s": 160287,
+      "shtesa_bajte": 64
+    },
+    "sekonda": 0.9
+  },
+  "falsifikimi": {
+    "prova": 2000,
+    "te_pranuara": 0,
+    "sekonda": 4.8
+  },
+  "numri_i_perseritur": {
+    "numer_i_njejte_blloku_1_i_njejte": true,
+    "numer_i_njejte_blloku_2_i_njejte": false,
+    "numer_i_ndryshem_blloku_1_i_njejte": false,
+    "sekonda": 0.0
+  }
+}

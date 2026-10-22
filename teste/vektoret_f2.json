@@ -1,0 +1,194 @@
+[
+  {
+    "emri": "zero/zero/VF/16",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "8b737aeae4ae33525d987625e684a765c2064b4f55ab56ccad43ec7638de974c"
+  },
+  {
+    "emri": "zero/zero/VF/32",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "251704a533fabf48285a6acf15447d7b9ae2deb85566e368a5f2399124d12be8"
+  },
+  {
+    "emri": "zero/zero/VL/16",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "d6afdae380806cac630c59d614a75e277925d53d180f46083ec43b280f1a50ab"
+  },
+  {
+    "emri": "zero/zero/VL/32",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "90c104fe315d2a6fca9599c2851648d8eda3aa806d8718939638979a46ffcebd"
+  },
+  {
+    "emri": "zero/rrites/VF/16",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "372be30c03af911484c199e06d87c402c9b568a2633b67abc4e717471c8d5fde"
+  },
+  {
+    "emri": "zero/rrites/VF/32",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "a39ac7463f4d884c59e0994e03f5c72a0e5c8df2c232831a16d500b728e43216"
+  },
+  {
+    "emri": "zero/rrites/VL/16",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "05c868e0b4def6ef712120d3eb5963aa9a90d93a8e983708e2d47e61449d8290"
+  },
+  {
+    "emri": "zero/rrites/VL/32",
+    "celesi": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "59de229ec001879b3ec3ca08789ddd5591347a5477053f4b2f43c760f989ba08"
+  },
+  {
+    "emri": "njesha/zero/VF/16",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "5e7b5fac2af8e46f68f93bd040b5d483243c3c317bc0e110ff4378a755fa49e2"
+  },
+  {
+    "emri": "njesha/zero/VF/32",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "fb174c2aefdf89ff53e52aeb4272aed65d9716246b6f224bd013334782a8baf7"
+  },
+  {
+    "emri": "njesha/zero/VL/16",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "252e1ee3be531a8917955837c62e03822b5690b7437659b05e6f383f8b9563a1"
+  },
+  {
+    "emri": "njesha/zero/VL/32",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "e5caa2ff7d2c96f0b2ac6b2704b95552efac189eb12123135cdfbee6940f56f9"
+  },
+  {
+    "emri": "njesha/rrites/VF/16",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "f3c2e26c4f1f0cb4bdd6cc9be3ac2097ecd43b78d937ffe06920d93d5b6b39ea"
+  },
+  {
+    "emri": "njesha/rrites/VF/32",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "0eeef7bcf8c2cd72a652177cf724d3cb4e7312d4a38efad3a1cf4b6ecfe6d571"
+  },
+  {
+    "emri": "njesha/rrites/VL/16",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "9c75301b31ab85f5372f53a10de7a1754555a67d12d038d4c3f693834ff655d1"
+  },
+  {
+    "emri": "njesha/rrites/VL/32",
+    "celesi": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "a92da93278f83e2335e7dda0efb2e8208e2761cd32fa97c94f42c6032fc4a834"
+  },
+  {
+    "emri": "rritese/zero/VF/16",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "8b7863f17ff0de267cde731c6b9f9d94c21a54ed40963abf31aa4c7702573b61"
+  },
+  {
+    "emri": "rritese/zero/VF/32",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "90f6b39053952fa1766d8f2bc9a378bee3212914d90b4bf83d7390fd4200dff2"
+  },
+  {
+    "emri": "rritese/zero/VL/16",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "de3ef85abeed1a563ce4957e924709490cbf8164a1b63003145ff6ca208d57d4"
+  },
+  {
+    "emri": "rritese/zero/VL/32",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "0000000000000000000000000000000000000000000000000000000000000000",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "a99c5b229f0398e66bb96afe8b8cbf159dd85ba8664ee2afe48b41e27937e144"
+  },
+  {
+    "emri": "rritese/rrites/VF/16",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 16,
+    "kriptuar": "42043f3c6d6e12baf00c3ad204961026b8ce183d95e6859eef4690c277fe653d"
+  },
+  {
+    "emri": "rritese/rrites/VF/32",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VF",
+    "raunde": 32,
+    "kriptuar": "c4480afa313e2e0456f21c9ea5dbc9febee98825a15d5affbed25a394379dfc7"
+  },
+  {
+    "emri": "rritese/rrites/VL/16",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 16,
+    "kriptuar": "d228cf5d7e77506acaba2736edd5181edd248771d2069e0fcb456efdee37c7fa"
+  },
+  {
+    "emri": "rritese/rrites/VL/32",
+    "celesi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313202",
+    "mesazhi": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "varianti": "VL",
+    "raunde": 32,
+    "kriptuar": "10701719c7b527d8c383ff3561aaf04bfe689df18b2bc0dec655b9fa399b109e"
+  }
+]

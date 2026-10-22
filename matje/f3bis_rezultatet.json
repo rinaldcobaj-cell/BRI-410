@@ -1,0 +1,156 @@
+{
+  "dalluesi": {
+    "pritja_rastesore": 4,
+    "VL": {
+      "1_nibble_3_raunde": [
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64
+      ],
+      "3_nibla_te_rreshtuara_4_raunde": [
+        64,
+        64,
+        64,
+        64,
+        64
+      ]
+    },
+    "VN": {
+      "1_nibble_3_raunde": [
+        4,
+        3,
+        3,
+        3,
+        7,
+        5,
+        1,
+        4,
+        1,
+        6
+      ],
+      "3_nibla_te_rreshtuara_4_raunde": [
+        3,
+        2,
+        5,
+        6,
+        2
+      ]
+    },
+    "VN_perseritur": {
+      "1_nibble_3_raunde": [
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64
+      ],
+      "3_nibla_te_rreshtuara_4_raunde": [
+        64,
+        64,
+        64,
+        64,
+        64
+      ]
+    },
+    "sekonda": 7.9
+  },
+  "sulmi_5_raunde": {
+    "VL": [
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 16384,
+        "sekonda": 1.0
+      },
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 20480,
+        "sekonda": 1.3
+      },
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 12288,
+        "sekonda": 0.8
+      }
+    ],
+    "VN": [
+      {
+        "rezultati": "kontradiktë: asnjë çelës nuk përputhet",
+        "sukses": false,
+        "tekste": 8192,
+        "sekonda": 2.5
+      },
+      {
+        "rezultati": "kontradiktë: asnjë çelës nuk përputhet",
+        "sukses": false,
+        "tekste": 8192,
+        "sekonda": 2.5
+      },
+      {
+        "rezultati": "kontradiktë: asnjë çelës nuk përputhet",
+        "sukses": false,
+        "tekste": 8192,
+        "sekonda": 2.5
+      }
+    ],
+    "VN_perseritur": [
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 12288,
+        "sekonda": 0.8
+      },
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 12288,
+        "sekonda": 0.8
+      },
+      {
+        "rezultati": "çelësi i raundit u rikthye",
+        "sukses": true,
+        "tekste": 16384,
+        "sekonda": 1.0
+      }
+    ],
+    "sekonda": 13.3
+  },
+  "perputhjet_e_lojes": {
+    "blloqe": 20000,
+    "cifte_me_loje_te_njejte_ne_4_raunde": 187,
+    "cifte_te_pritura": 190.7,
+    "ndryshimi_i_rk1_ne_keto_cifte": {
+      "mes": 0.4996,
+      "min": 0.418
+    },
+    "ortek_1_bit_numri_16_raunde": {
+      "mes": 0.4962,
+      "min": 0.3828,
+      "max": 0.6133
+    },
+    "sekonda": 5.1
+  },
+  "shpejtesia": {
+    "blloqe_ne_sekonde_python": {
+      "VL16": 5840,
+      "VN16": 1603,
+      "VL32": 3026,
+      "VN32": 928
+    },
+    "sekonda": 6.6
+  }
+}

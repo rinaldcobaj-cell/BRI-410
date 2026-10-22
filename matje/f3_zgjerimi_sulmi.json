@@ -1,0 +1,43 @@
+{
+  "raunde": 5,
+  "VF": [
+    {
+      "sukses": true,
+      "tekste": 12288,
+      "dr_e_gjetur": 1,
+      "sekonda": 0.8
+    },
+    {
+      "sukses": true,
+      "tekste": 12288,
+      "dr_e_gjetur": 1,
+      "sekonda": 0.8
+    },
+    {
+      "sukses": true,
+      "tekste": 12288,
+      "dr_e_gjetur": 1,
+      "sekonda": 0.8
+    }
+  ],
+  "VL": [
+    {
+      "sukses": true,
+      "tekste": 16384,
+      "dr_e_gjetur": -1,
+      "sekonda": 1.0
+    },
+    {
+      "sukses": true,
+      "tekste": 12288,
+      "dr_e_gjetur": 1,
+      "sekonda": 0.8
+    },
+    {
+      "sukses": true,
+      "tekste": 12288,
+      "dr_e_gjetur": 1,
+      "sekonda": 0.8
+    }
+  ]
+}

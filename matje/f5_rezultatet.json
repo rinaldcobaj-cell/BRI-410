@@ -1,0 +1,204 @@
+{
+  "M1_sbox": {
+    "numeruesi": 9,
+    "bri8": {
+      "uniformiteti_diferencial": 4,
+      "lineariteti": 32,
+      "jolineariteti": 112,
+      "shkalla_min": 7,
+      "shkalla_max": 7,
+      "pika_fikse": [
+        0,
+        0
+      ]
+    },
+    "aes_reference": {
+      "uniformiteti_diferencial": 4,
+      "lineariteti": 32,
+      "jolineariteti": 112,
+      "shkalla_min": 7,
+      "shkalla_max": 7,
+      "pika_fikse": [
+        0,
+        0
+      ]
+    },
+    "baza_rastesore_10": {
+      "DU_min_max": [
+        10,
+        16
+      ],
+      "jolineariteti_min_max": [
+        90,
+        96
+      ]
+    },
+    "sekonda": 1.0
+  },
+  "M2_mds": {
+    "y": [
+      145,
+      234,
+      150,
+      206,
+      98,
+      226,
+      235,
+      94
+    ],
+    "nenmatrica": 12869,
+    "singulare": 0,
+    "singulare_inversi": 0,
+    "involutive": false,
+    "simetrite_e_kolonave": 1,
+    "elemente_te_ndryshem": 48,
+    "sekonda": 0.2
+  },
+  "M3_korrektesia": {
+    "sakte": 2000,
+    "gjithsej": 2000,
+    "sekonda": 1.2
+  },
+  "M4_ortek": {
+    "baza_rastesore": {
+      "mes": 0.5006,
+      "min": 0.4258
+    },
+    "mesazhi_R1": {
+      "mes": 0.0631,
+      "min": 0.0449
+    },
+    "mesazhi_R2": {
+      "mes": 0.5022,
+      "min": 0.4336
+    },
+    "mesazhi_R3": {
+      "mes": 0.5006,
+      "min": 0.4277
+    },
+    "mesazhi_R4": {
+      "mes": 0.4998,
+      "min": 0.4238
+    },
+    "mesazhi_R16": {
+      "mes": 0.4994,
+      "min": 0.4258
+    },
+    "numri_R16": {
+      "mes": 0.4979,
+      "min": 0.4375
+    },
+    "sekonda": 0.9
+  },
+  "M5_integral": {
+    "pritja_rastesore": 0.25,
+    "1_bajt_R2": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ],
+    "1_bajt_R3": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ],
+    "1_bajt_R4": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "2_bajte_te_rreshtuara_R4": [
+      1,
+      0
+    ],
+    "VN_unik_1_bajt_R3": [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "sekonda": 5.6
+  },
+  "M6_sulmi_4_raunde": {
+    "prova": [
+      {
+        "sukses": true,
+        "tekste": 768
+      },
+      {
+        "sukses": true,
+        "tekste": 512
+      },
+      {
+        "sukses": true,
+        "tekste": 512
+      },
+      {
+        "sukses": true,
+        "tekste": 512
+      },
+      {
+        "sukses": true,
+        "tekste": 768
+      }
+    ],
+    "sukses": 5,
+    "sekonda": 0.9
+  },
+  "M8_shpejtesia": {
+    "bajte_ne_sekonde_python": {
+      "BRI410_8_VN16": 149426,
+      "BRI410_4bit_VN16": 50862,
+      "BRI410_4bit_VN32": 29274
+    },
+    "sekonda": 3.2
+  },
+  "M7_kufiri_teorik": {
+    "log2_prob_per_sbox": -6.0,
+    "tabela": {
+      "2": {
+        "aktive_min": 9,
+        "log2_prob": -54.0
+      },
+      "4": {
+        "aktive_min": 81,
+        "log2_prob": -486.0
+      },
+      "6": {
+        "aktive_min": 90,
+        "log2_prob": -540.0
+      },
+      "8": {
+        "aktive_min": 162,
+        "log2_prob": -972.0
+      },
+      "16": {
+        "aktive_min": 324,
+        "log2_prob": -1944.0
+      }
+    },
+    "R2_kunder_2^-512": 6
+  }
+}

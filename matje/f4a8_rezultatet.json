@@ -1,0 +1,210 @@
+{
+  "perputhja_me_BRI410_8": true,
+  "ortek_i_numrit": {
+    "hapa_pas_0": {
+      "rk0": {
+        "mes": 0.002,
+        "min": 0.002
+      },
+      "kriptimi_R1": {
+        "mes": 0.1141,
+        "min": 0.0801
+      },
+      "kriptimi_R4": {
+        "mes": 0.5004,
+        "min": 0.4375
+      }
+    },
+    "hapa_pas_1": {
+      "rk0": {
+        "mes": 0.0589,
+        "min": 0.0371
+      },
+      "kriptimi_R1": {
+        "mes": 0.4959,
+        "min": 0.3984
+      },
+      "kriptimi_R4": {
+        "mes": 0.4998,
+        "min": 0.4355
+      }
+    },
+    "hapa_pas_2": {
+      "rk0": {
+        "mes": 0.4039,
+        "min": 0.3477
+      },
+      "kriptimi_R1": {
+        "mes": 0.4985,
+        "min": 0.4375
+      },
+      "kriptimi_R4": {
+        "mes": 0.5005,
+        "min": 0.4316
+      }
+    },
+    "hapa_pas_3": {
+      "rk0": {
+        "mes": 0.4992,
+        "min": 0.4238
+      },
+      "kriptimi_R1": {
+        "mes": 0.4996,
+        "min": 0.4453
+      },
+      "kriptimi_R4": {
+        "mes": 0.5018,
+        "min": 0.4355
+      }
+    },
+    "hapa_pas_4": {
+      "rk0": {
+        "mes": 0.4976,
+        "min": 0.4473
+      },
+      "kriptimi_R1": {
+        "mes": 0.5019,
+        "min": 0.4316
+      },
+      "kriptimi_R4": {
+        "mes": 0.4998,
+        "min": 0.4414
+      }
+    },
+    "sekonda": 0.5
+  },
+  "integral_me_numra": {
+    "pritja_rastesore": 0.25,
+    "hapa_pas_0": {
+      "1_bajt_R1": [
+        64,
+        64
+      ],
+      "1_bajt_R2": [
+        1,
+        0
+      ],
+      "1_bajt_R3": [
+        0,
+        0
+      ],
+      "1_bajt_R4": [
+        0,
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        64
+      ],
+      "2_bajte_ne_nje_rresht_R2": [
+        48
+      ]
+    },
+    "hapa_pas_1": {
+      "1_bajt_R1": [
+        32,
+        32
+      ],
+      "1_bajt_R2": [
+        0,
+        0
+      ],
+      "1_bajt_R3": [
+        0,
+        0
+      ],
+      "1_bajt_R4": [
+        0,
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        64
+      ],
+      "2_bajte_ne_nje_rresht_R2": [
+        0
+      ]
+    },
+    "hapa_pas_2": {
+      "1_bajt_R1": [
+        1,
+        1
+      ],
+      "1_bajt_R2": [
+        0,
+        0
+      ],
+      "1_bajt_R3": [
+        0,
+        0
+      ],
+      "1_bajt_R4": [
+        0,
+        1
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        1
+      ],
+      "2_bajte_ne_nje_rresht_R2": [
+        0
+      ]
+    },
+    "hapa_pas_3": {
+      "1_bajt_R1": [
+        1,
+        0
+      ],
+      "1_bajt_R2": [
+        0,
+        1
+      ],
+      "1_bajt_R3": [
+        1,
+        1
+      ],
+      "1_bajt_R4": [
+        0,
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R2": [
+        1
+      ]
+    },
+    "hapa_pas_4": {
+      "1_bajt_R1": [
+        1,
+        0
+      ],
+      "1_bajt_R2": [
+        0,
+        1
+      ],
+      "1_bajt_R3": [
+        0,
+        0
+      ],
+      "1_bajt_R4": [
+        0,
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R2": [
+        0
+      ]
+    },
+    "zyrtari_hapa_4_R16": {
+      "1_bajt": [
+        0,
+        0,
+        0
+      ],
+      "2_bajte_ne_nje_rresht": [
+        0
+      ]
+    },
+    "sekonda": 70.1
+  }
+}

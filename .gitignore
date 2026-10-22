@@ -1,0 +1,4 @@
+# Mjedisi lokal i Python-it dhe skedarët e përkohshëm: nuk publikohen
+.venv/
+__pycache__/
+*.pyc

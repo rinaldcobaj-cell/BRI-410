@@ -1,0 +1,50 @@
+# BRI-410
+
+Shifër blloku **studimi** e frymëzuar nga shahu. **Nuk është për përdorim real.**
+
+Autori: **Rinald Cobaj**. Licenca: **CC0 1.0** (domen publik, shih `LICENSE`). BRI-410 nuk është i patentuar.
+
+**BRI-410 zyrtar = BRI-410/8:** tabelë 8×8 me kuti 8-bitëshe (bllok 512 bit), çelës 410 bit (≈ 10^123 "lojëra"),
+lojë e re për çdo bllok ("çdo lojë luhet vetëm një herë"), 16 raunde ("16 gurët e çdo lojtari").
+
+**Përdorimi (mesazhe të çdo gjatësie, me vulë 416 bit):**
+
+```python
+from shahu import bri8, menyra
+celesi = bri8.gjenero_celes()                                          # NJË herë, 52 bajte (410 bit)
+paketa = menyra.kripto(celesi, b"mesazhi", te_dhena=b"Ana -> Besi")    # numri unik gjenerohet vetë
+assert menyra.dekripto(celesi, paketa, te_dhena=b"Ana -> Besi") == b"mesazhi"   # ose ngre VulaEGabuar
+```
+
+Rregulli: numri i mesazhit nuk përsëritet kurrë me të njëjtin çelës. Pa `numri=`, gjenerohet rastësisht.
+
+## Dokumentet
+
+- `docs/F0_SPECIFIKIMI.md`: specifikimi (§10 = zyrtari BRI-410/8; §2–§9 = BRI-410/4, versioni i parë)
+- `docs/F1_RAPORTI.md`: matjet e komponentëve (BRI-410/4)
+- `docs/F2_RAPORTI.md`: prototipi i plotë (BRI-410/4)
+- `docs/F3_RAPORTI.md`: loja kundrejt lëvizjes fikse, sulmet integrale, krahasimi me AES
+- `docs/F3BIS_RAPORTI.md`: "çdo lojë luhet vetëm një herë" (V-N) e bllokon sulmin integral
+- `docs/F4A_RAPORTI.md`: sulme me numra të zgjedhur kundër BRI-410/4
+- `docs/F5_RAPORTI.md`: BRI-410/8, përfshirë sulmet me numra të zgjedhur, që e bënë zyrtar
+- `docs/F6_RAPORTI.md`: mënyra e përdorimit (ΘCB3) me vulë 416 bit dhe të dhëna shoqëruese
+- `docs/F4B_RAPORTI.md`: kufij të provuar me CP-SAT (sulmet diferenciale/lineare, orari me numra të zgjedhur)
+
+## Paketa e publikimit (anglisht)
+
+- `publikim/paper/BRI-410.pdf`: punimi, 5 faqe (burimi `BRI-410.md`, rindërtohet me `python ndertoj_pdf.py`)
+- `publikim/paper/BRI-410_shqip.pdf`: i njëjti punim në shqip, për autorin (nuk publikohet)
+- `publikim/reference/`: `bri410.py` (një skedar, vetëm Python standard), `test_vectors.json`, `verify.py`
+- `publikim/UDHEZUESI.md`: udhëzuesi në shqip, hap pas hapi deri te IACR ePrint
+
+## Kodi
+
+- `shahu/menyra.py`: **BRI-410 AE**, mesazhe të çdo gjatësie me vulë (`kripto`, `dekripto`, `VulaEGabuar`)
+- `shahu/bri8.py`: **BRI-410/8 zyrtar** (`BRI410_8`, `kripto_bllok`, `dekripto_bllok`), me `gf256`, `sbox8`, `mds8`
+- `shahu/shifra.py`: BRI-410/4 (`BRI410`, variantet VF/VL/VN), me `gf16`, `sbox`, `mds`, `levizja`, `celesi`
+- `teste/`: `python -m unittest discover -s teste -t .`
+- `matje/`: `f1_matjet`, `f2_matjet`, `f3_matjet`, `f3_zgjerimi`, `f3bis_matjet`, `f4a_matjet`, `f5_matjet`, `f4a8_matjet`, `f6_matjet`
+  (`python -m matje.<emri>`); `f4b_milp` me `.venv\Scripts\python.exe` (kërkon `ortools`); `aes_studim.py` = AES-256 për krahasim
+
+Fazat: F0 ✅ · F1 ✅ · F2 ✅ · F3 ✅ · F3-bis ✅ · F4-a ✅ · F5 ✅ (BRI-410/8 zyrtar) · hapi 2 ✅ (mënyra + vula) · F4-b ✅ (CP-SAT) · deklarata e sigurisë · implementim në C.
+Çdo fazë pret miratimin e pronarit.

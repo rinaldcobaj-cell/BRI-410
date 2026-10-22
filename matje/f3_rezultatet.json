@@ -1,0 +1,165 @@
+{
+  "informacioni_i_lojes": {
+    "variante": 32,
+    "permutime_te_ndryshme": 32,
+    "bit_pozicioni_i_sakte": 5.0,
+    "harta_kuti_rresht": 2,
+    "bit_rreshti": 1.0,
+    "ndarje_ne_grupe_rreshtash": 2,
+    "bit_grupimi": 1.0,
+    "sekonda": 0.0
+  },
+  "integral": {
+    "pritja_rastesore": {
+      "shahu_nibla": 4.0,
+      "aes_bajte": 0.06
+    },
+    "VF": {
+      "1_nibble_2_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_nibble_3_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_nibble_4_raunde": {
+        "mes": 3.65,
+        "min": 0,
+        "plotesisht_te_balancuara": 0,
+        "prova": 20
+      },
+      "2_nibla_4_raunde": {
+        "mes": 3.9,
+        "min": 1,
+        "plotesisht_te_balancuara": 0,
+        "prova": 10
+      },
+      "4_nibla_ne_nje_rresht_4_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 3,
+        "prova": 3
+      }
+    },
+    "VL": {
+      "1_nibble_2_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_nibble_3_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_nibble_4_raunde": {
+        "mes": 4.0,
+        "min": 1,
+        "plotesisht_te_balancuara": 0,
+        "prova": 20
+      },
+      "2_nibla_4_raunde": {
+        "mes": 3.2,
+        "min": 0,
+        "plotesisht_te_balancuara": 0,
+        "prova": 10
+      },
+      "4_nibla_ne_nje_rresht_4_raunde": {
+        "mes": 64.0,
+        "min": 64,
+        "plotesisht_te_balancuara": 3,
+        "prova": 3
+      }
+    },
+    "AES": {
+      "1_bajt_2_raunde": {
+        "mes": 16.0,
+        "min": 16,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_bajt_3_raunde": {
+        "mes": 16.0,
+        "min": 16,
+        "plotesisht_te_balancuara": 20,
+        "prova": 20
+      },
+      "1_bajt_4_raunde": {
+        "mes": 0.1,
+        "min": 0,
+        "plotesisht_te_balancuara": 0,
+        "prova": 20
+      }
+    },
+    "sekonda": 20.2
+  },
+  "sulmi_4_raunde": {
+    "VF": {
+      "sukses": 10,
+      "prova": 10,
+      "tekste_mes": 48.0,
+      "bite_celesi_raundi_te_rikthyer": 256,
+      "sekonda_per_sulm": 0.0
+    },
+    "VL": {
+      "sukses": 10,
+      "prova": 10,
+      "tekste_mes": 56.0,
+      "bite_celesi_raundi_te_rikthyer": 256,
+      "sekonda_per_sulm": 0.0
+    },
+    "AES": {
+      "sukses": 10,
+      "prova": 10,
+      "tekste_mes": 537.6,
+      "bite_celesi_raundi_te_rikthyer": 128,
+      "sekonda_per_sulm": 0.05
+    },
+    "sekonda": 0.5
+  },
+  "ortek_aes": {
+    "1": {
+      "mes": 0.0316,
+      "min": 0.0078,
+      "max": 0.0625
+    },
+    "2": {
+      "mes": 0.1258,
+      "min": 0.0625,
+      "max": 0.2109
+    },
+    "3": {
+      "mes": 0.5023,
+      "min": 0.3594,
+      "max": 0.6562
+    },
+    "4": {
+      "mes": 0.4981,
+      "min": 0.3047,
+      "max": 0.6328
+    },
+    "14": {
+      "mes": 0.5007,
+      "min": 0.3438,
+      "max": 0.6719
+    },
+    "sekonda": 0.4
+  },
+  "shpejtesia": {
+    "bajte_ne_sekonde_python": {
+      "AES256_14": 356235,
+      "Shahu_VF16": 185407,
+      "Shahu_VF32": 95213,
+      "Shahu_VL16": 187622,
+      "Shahu_VL32": 97214
+    },
+    "sekonda": 5.3
+  }
+}

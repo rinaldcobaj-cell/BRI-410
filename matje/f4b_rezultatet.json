@@ -1,0 +1,119 @@
+{
+  "log2_prob_per_sbox": -6.0,
+  "shifra_loja_e_lire": {
+    "1": {
+      "minimumi": 1,
+      "kufiri_i_poshtem": 1,
+      "i_provuar": true,
+      "sekonda": 0.0,
+      "log2_prob_max": -6.0
+    },
+    "2": {
+      "minimumi": 9,
+      "kufiri_i_poshtem": 9,
+      "i_provuar": true,
+      "sekonda": 0.1,
+      "log2_prob_max": -54.0
+    },
+    "3": {
+      "minimumi": 17,
+      "kufiri_i_poshtem": 17,
+      "i_provuar": true,
+      "sekonda": 0.5,
+      "log2_prob_max": -102.0
+    },
+    "4": {
+      "minimumi": 81,
+      "kufiri_i_poshtem": 81,
+      "i_provuar": true,
+      "sekonda": 3.4,
+      "log2_prob_max": -486.0
+    },
+    "5": {
+      "minimumi": 82,
+      "kufiri_i_poshtem": 82,
+      "i_provuar": true,
+      "sekonda": 19.8,
+      "log2_prob_max": -492.0
+    },
+    "6": {
+      "minimumi": 90,
+      "kufiri_i_poshtem": 45,
+      "i_provuar": false,
+      "sekonda": 600.1,
+      "log2_prob_max": -270.0
+    },
+    "7": {
+      "minimumi": 98,
+      "kufiri_i_poshtem": 29,
+      "i_provuar": false,
+      "sekonda": 600.1,
+      "log2_prob_max": -174.0
+    },
+    "8": {
+      "minimumi": 162,
+      "kufiri_i_poshtem": 26,
+      "i_provuar": false,
+      "sekonda": 600.1,
+      "log2_prob_max": -156.0
+    }
+  },
+  "shifra_loja_fikse_dr_plus": {
+    "2": {
+      "minimumi": 9,
+      "kufiri_i_poshtem": 9,
+      "i_provuar": true,
+      "sekonda": 0.0
+    },
+    "4": {
+      "minimumi": 81,
+      "kufiri_i_poshtem": 81,
+      "i_provuar": true,
+      "sekonda": 0.2
+    }
+  },
+  "orari": {
+    "1": {
+      "minimumi": 1,
+      "kufiri_i_poshtem": 1,
+      "i_provuar": true,
+      "sekonda": 0.0,
+      "log2_prob_max": -6.0
+    },
+    "2": {
+      "minimumi": 9,
+      "kufiri_i_poshtem": 9,
+      "i_provuar": true,
+      "sekonda": 0.0,
+      "log2_prob_max": -54.0
+    },
+    "3": {
+      "minimumi": 17,
+      "kufiri_i_poshtem": 17,
+      "i_provuar": true,
+      "sekonda": 0.0,
+      "log2_prob_max": -102.0
+    },
+    "4": {
+      "minimumi": 81,
+      "kufiri_i_poshtem": 81,
+      "i_provuar": true,
+      "sekonda": 0.1,
+      "log2_prob_max": -486.0
+    },
+    "5": {
+      "minimumi": 107,
+      "kufiri_i_poshtem": 107,
+      "i_provuar": true,
+      "sekonda": 1.2,
+      "log2_prob_max": -642.0
+    },
+    "6": {
+      "minimumi": 114,
+      "kufiri_i_poshtem": 114,
+      "i_provuar": true,
+      "sekonda": 7.9,
+      "log2_prob_max": -684.0
+    }
+  }
+}

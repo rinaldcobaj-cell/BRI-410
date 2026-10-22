@@ -1,0 +1,17 @@
+BRI-410 — tweakable block cipher, authenticated-encryption mode, reference code, analysis and documentation.
+
+Author: Rinald Cobaj
+
+CC0 1.0 Universal (Public Domain Dedication)
+
+To the extent possible under law, Rinald Cobaj has waived all copyright and related or neighboring rights to
+BRI-410, including its specification, reference implementation, test vectors, analysis scripts and documentation.
+
+The full legal text is available at:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Patents: BRI-410 is not patented, and the author does not intend to apply for any patent on it.
+Anyone may use, analyse, implement, modify and distribute it freely.
+
+BRI-410 is a study cipher. It has not been analysed by independent cryptanalysts yet.
+Do not use it to protect real data.

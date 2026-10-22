@@ -1,0 +1,76 @@
+{
+  "VF": {
+    "2_nibla_4_raunde": {
+      "te_balancuara": [
+        2,
+        4,
+        3,
+        2,
+        3
+      ],
+      "nga": 64
+    },
+    "3_nibla_4_raunde": {
+      "te_balancuara": [
+        64,
+        64,
+        64,
+        64,
+        64
+      ],
+      "nga": 64
+    },
+    "4_nibla_5_raunde": {
+      "te_balancuara": [
+        2,
+        1,
+        2
+      ],
+      "nga": 64
+    },
+    "4_nibla_6_raunde": {
+      "te_balancuara": [
+        2,
+        3
+      ],
+      "nga": 64
+    }
+  },
+  "VL": {
+    "2_nibla_4_raunde": {
+      "te_balancuara": [
+        2,
+        3,
+        5,
+        3,
+        3
+      ],
+      "nga": 64
+    },
+    "3_nibla_4_raunde": {
+      "te_balancuara": [
+        64,
+        64,
+        64,
+        64,
+        64
+      ],
+      "nga": 64
+    },
+    "4_nibla_5_raunde": {
+      "te_balancuara": [
+        6,
+        2,
+        8
+      ],
+      "nga": 64
+    },
+    "4_nibla_6_raunde": {
+      "te_balancuara": [
+        3,
+        4
+      ],
+      "nga": 64
+    }
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "korrektesia": {
+    "VF16": {
+      "sakte": 10000,
+      "gjithsej": 10000,
+      "blloqe_ne_sekonde_python": 5825
+    },
+    "VF32": {
+      "sakte": 10000,
+      "gjithsej": 10000,
+      "blloqe_ne_sekonde_python": 2967
+    },
+    "VL16": {
+      "sakte": 10000,
+      "gjithsej": 10000,
+      "blloqe_ne_sekonde_python": 5796
+    },
+    "VL32": {
+      "sakte": 10000,
+      "gjithsej": 10000,
+      "blloqe_ne_sekonde_python": 2944
+    },
+    "sekonda": 20.7
+  },
+  "ortek_mesazhi": {
+    "baza_rastesore": {
+      "mes": 0.5007,
+      "min": 0.3867,
+      "max": 0.6133
+    },
+    "VF": {
+      "1": {
+        "mes": 0.0666,
+        "min": 0.0547,
+        "max": 0.0781
+      },
+      "2": {
+        "mes": 0.5342,
+        "min": 0.4648,
+        "max": 0.582
+      },
+      "3": {
+        "mes": 0.4991,
+        "min": 0.3828,
+        "max": 0.6055
+      },
+      "4": {
+        "mes": 0.5003,
+        "min": 0.3906,
+        "max": 0.6211
+      },
+      "5": {
+        "mes": 0.5001,
+        "min": 0.4023,
+        "max": 0.6172
+      },
+      "6": {
+        "mes": 0.5005,
+        "min": 0.3906,
+        "max": 0.6094
+      },
+      "8": {
+        "mes": 0.5,
+        "min": 0.3945,
+        "max": 0.5977
+      },
+      "16": {
+        "mes": 0.5002,
+        "min": 0.3906,
+        "max": 0.5977
+      },
+      "32": {
+        "mes": 0.4993,
+        "min": 0.3867,
+        "max": 0.6016
+      }
+    },
+    "VL": {
+      "1": {
+        "mes": 0.0663,
+        "min": 0.0547,
+        "max": 0.0781
+      },
+      "2": {
+        "mes": 0.5341,
+        "min": 0.4688,
+        "max": 0.5898
+      },
+      "3": {
+        "mes": 0.4992,
+        "min": 0.3984,
+        "max": 0.582
+      },
+      "4": {
+        "mes": 0.4985,
+        "min": 0.3828,
+        "max": 0.6211
+      },
+      "5": {
+        "mes": 0.4998,
+        "min": 0.3906,
+        "max": 0.6484
+      },
+      "6": {
+        "mes": 0.5008,
+        "min": 0.3984,
+        "max": 0.5938
+      },
+      "8": {
+        "mes": 0.5002,
+        "min": 0.3867,
+        "max": 0.6016
+      },
+      "16": {
+        "mes": 0.5007,
+        "min": 0.4102,
+        "max": 0.6133
+      },
+      "32": {
+        "mes": 0.4995,
+        "min": 0.3945,
+        "max": 0.6094
+      }
+    },
+    "sekonda": 7.6
+  },
+  "kriteri_sac": {
+    "mostra_per_bit": 64,
+    "baza_rastesore": {
+      "devijimi_max": 0.2656,
+      "qeliza_0_ose_1": 0
+    },
+    "VF": {
+      "1": {
+        "devijimi_max": 0.5,
+        "qeliza_0_ose_1": 57344
+      },
+      "2": {
+        "devijimi_max": 0.3281,
+        "qeliza_0_ose_1": 0
+      },
+      "3": {
+        "devijimi_max": 0.2656,
+        "qeliza_0_ose_1": 0
+      },
+      "4": {
+        "devijimi_max": 0.2812,
+        "qeliza_0_ose_1": 0
+      },
+      "6": {
+        "devijimi_max": 0.25,
+        "qeliza_0_ose_1": 0
+      }
+    },
+    "VL": {
+      "1": {
+        "devijimi_max": 0.5,
+        "qeliza_0_ose_1": 51200
+      },
+      "2": {
+        "devijimi_max": 0.2812,
+        "qeliza_0_ose_1": 0
+      },
+      "3": {
+        "devijimi_max": 0.2812,
+        "qeliza_0_ose_1": 0
+      },
+      "4": {
+        "devijimi_max": 0.2812,
+        "qeliza_0_ose_1": 0
+      },
+      "6": {
+        "devijimi_max": 0.2656,
+        "qeliza_0_ose_1": 0
+      }
+    },
+    "sekonda": 19.5
+  },
+  "ortek_celesi": {
+    "baza_rastesore": {
+      "mes": 0.5,
+      "min": 0.4102,
+      "max": 0.6094
+    },
+    "VF": {
+      "1": {
+        "mes": 0.0791,
+        "min": 0.0117,
+        "max": 0.1484
+      },
+      "2": {
+        "mes": 0.4677,
+        "min": 0.3164,
+        "max": 0.5898
+      },
+      "3": {
+        "mes": 0.5006,
+        "min": 0.3867,
+        "max": 0.5938
+      },
+      "4": {
+        "mes": 0.498,
+        "min": 0.4141,
+        "max": 0.6055
+      },
+      "6": {
+        "mes": 0.4999,
+        "min": 0.4062,
+        "max": 0.5898
+      },
+      "16": {
+        "mes": 0.4979,
+        "min": 0.3945,
+        "max": 0.6055
+      },
+      "32": {
+        "mes": 0.4988,
+        "min": 0.3984,
+        "max": 0.5898
+      }
+    },
+    "VL": {
+      "1": {
+        "mes": 0.1335,
+        "min": 0.0195,
+        "max": 0.5938
+      },
+      "2": {
+        "mes": 0.4864,
+        "min": 0.3164,
+        "max": 0.6133
+      },
+      "3": {
+        "mes": 0.4993,
+        "min": 0.3945,
+        "max": 0.6055
+      },
+      "4": {
+        "mes": 0.4987,
+        "min": 0.3906,
+        "max": 0.582
+      },
+      "6": {
+        "mes": 0.4982,
+        "min": 0.3789,
+        "max": 0.5859
+      },
+      "16": {
+        "mes": 0.4996,
+        "min": 0.3984,
+        "max": 0.5859
+      },
+      "32": {
+        "mes": 0.5,
+        "min": 0.3789,
+        "max": 0.6172
+      }
+    },
+    "sekonda": 8.2
+  },
+  "statistika_numeruesi": {
+    "blloqe": 20000,
+    "VF16": {
+      "monobit_z": 0.054,
+      "monobit_pragu_99": 2.576,
+      "nibla_chi2": 14.2,
+      "nibla_pragu_99": 30.6,
+      "bajte_chi2": 255.7,
+      "bajte_pragu_99": 310.5
+    },
+    "VL16": {
+      "monobit_z": -0.316,
+      "monobit_pragu_99": 2.576,
+      "nibla_chi2": 12.7,
+      "nibla_pragu_99": 30.6,
+      "bajte_chi2": 249.7,
+      "bajte_pragu_99": 310.5
+    },
+    "sekonda": 7.2
+  }
+}
