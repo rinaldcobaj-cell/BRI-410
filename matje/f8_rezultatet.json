@@ -1,0 +1,123 @@
+{
+  "kufiri_i_orarit_8_hapa_pas_numrit": "≥ 162 S-box aktive (2 × 81, nga kufiri i provuar 4-hapësh i F4-b)",
+  "K_sulmi_i_F7": {
+    "rezultati": {
+      "1.0": [
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": true,
+          "bllok_tjeter_u_parashikua": true
+        },
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": true,
+          "bllok_tjeter_u_parashikua": true
+        },
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": true,
+          "bllok_tjeter_u_parashikua": true
+        }
+      ],
+      "1.1": [
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": false,
+          "bllok_tjeter_u_parashikua": false
+        },
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": false,
+          "bllok_tjeter_u_parashikua": false
+        },
+        {
+          "G0_i_bllokut_u_rindertua": true,
+          "celesi_kryesor_u_gjet": false,
+          "bllok_tjeter_u_parashikua": false
+        }
+      ]
+    },
+    "sekonda": 0.9
+  },
+  "ortek": {
+    "rezultati": {
+      "1_bit_celesi": {
+        "RK_0": {
+          "mes": 0.5006,
+          "min": 0.4355,
+          "max": 0.5703
+        },
+        "RK_1": {
+          "mes": 0.5005,
+          "min": 0.4258,
+          "max": 0.5723
+        },
+        "RK_8": {
+          "mes": 0.5007,
+          "min": 0.4395,
+          "max": 0.5605
+        },
+        "RK_16": {
+          "mes": 0.4997,
+          "min": 0.4297,
+          "max": 0.5645
+        }
+      },
+      "1_bit_numri": {
+        "RK_0": {
+          "mes": 0.5004,
+          "min": 0.4395,
+          "max": 0.5645
+        },
+        "teksti_16_raunde": {
+          "mes": 0.5016,
+          "min": 0.4395,
+          "max": 0.5664
+        }
+      }
+    },
+    "sekonda": 1.0
+  },
+  "numra_te_zgjedhur": {
+    "rezultati": {
+      "1_bajt_R1": [
+        0,
+        1,
+        0
+      ],
+      "1_bajt_R2": [
+        1,
+        0,
+        1
+      ],
+      "1_bajt_R16": [
+        0,
+        1,
+        0
+      ],
+      "2_bajte_ne_nje_rresht_R1": [
+        0
+      ],
+      "diferenca_e_kombinuar_mes_zero_bajte": {
+        "R1": 0.225,
+        "R2": 0.28,
+        "R3": 0.26
+      },
+      "statistikat_16_raunde_numri_numerues": {
+        "monobit_z": -0.742,
+        "vargjet_z": 0.778,
+        "bajte_chi2": 261.1,
+        "nibla_chi2": 6.1
+      }
+    },
+    "sekonda": 13.8
+  },
+  "shpejtesia": {
+    "rezultati": {
+      "blloqe_ne_sekonde_1.0": 2651,
+      "blloqe_ne_sekonde_1.1": 2295,
+      "AE_64KB_bajte_ne_sekonde_v11": 151133
+    },
+    "sekonda": 1.7
+  }
+}

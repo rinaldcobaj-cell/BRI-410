@@ -8,7 +8,7 @@ from pathlib import Path
 from shahu import bri8, gf256, levizja, mds8, sbox8
 
 
-def _kripto_reference(k: int, numri: bytes, x: list[int], raunde: int) -> list[int]:
+def _kripto_reference(k: int, numri: bytes, x: list[int], raunde: int, versioni: str = "1.1") -> list[int]:
     """Direkt nga përshkrimi i modulit, me komponentët e ngadaltë."""
     g = bri8.ngarko(k)
 
@@ -23,8 +23,14 @@ def _kripto_reference(k: int, numri: bytes, x: list[int], raunde: int) -> list[i
     for j in range(4):
         g = hapi(g, 0xF0 + j)
     g = [v ^ (numri[j] if j < 16 else 0) for j, v in enumerate(g)]
-    for j in range(4, 8):
-        g = hapi(g, 0xF0 + j)
+    if versioni == "1.0":
+        for j in range(4, 8):
+            g = hapi(g, 0xF0 + j)
+    else:
+        hyrja = list(g)
+        for j in range(4, 12):
+            g = hapi(g, 0xF0 + j)
+        g = [a ^ b for a, b in zip(g, hyrja)]  # feed-forward
     x = [a ^ b for a, b in zip(x, g[:64])]
     for i in range(1, raunde + 1):
         g = hapi(g, i)
@@ -59,12 +65,21 @@ class TestBRI8(unittest.TestCase):
 
     def test_kriptimi_si_referenca(self):
         rng = random.Random(92)
-        for raunde in (1, 4, 16):
-            for _ in range(5):
-                k, numri = rng.getrandbits(410), rng.randbytes(16)
-                x = [rng.randrange(256) for _ in range(64)]
-                self.assertEqual(bri8.BRI410_8(k, raunde, numri).kripto_bajte(x),
-                                 _kripto_reference(k, numri, x, raunde))
+        for versioni in bri8.VERSIONET:
+            for raunde in (1, 4, 16):
+                for _ in range(5):
+                    k, numri = rng.getrandbits(410), rng.randbytes(16)
+                    x = [rng.randrange(256) for _ in range(64)]
+                    self.assertEqual(bri8.BRI410_8(k, raunde, numri, versioni=versioni).kripto_bajte(x),
+                                     _kripto_reference(k, numri, x, raunde, versioni))
+
+    def test_versionet_ndryshojne_vetem_te_orari(self):
+        rng = random.Random(96)
+        k, numri, m = rng.getrandbits(410), rng.randbytes(16), rng.randbytes(64)
+        self.assertEqual(bri8.VERSIONI, "1.1")
+        self.assertNotEqual(bri8.BRI410_8(k, 16, numri, versioni="1.0").kripto(m), bri8.BRI410_8(k, 16, numri).kripto(m))
+        s = bri8.BRI410_8(k, 16, numri, versioni="1.0")
+        self.assertEqual(s.dekripto(s.kripto(m)), m)
 
     def test_dekriptimi_kthen_mesazhin(self):
         rng = random.Random(93)
@@ -74,12 +89,14 @@ class TestBRI8(unittest.TestCase):
             self.assertEqual(s.dekripto(s.kripto(m)), m)
 
     def test_vektoret_e_njohur(self):
-        """Regresion: rezultatet e ngrira në vektoret_f5.json nuk duhet të ndryshojnë pa qëllim."""
-        vektoret = json.loads(Path(__file__).with_name("vektoret_f5.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(vektoret), 12)
-        for v in vektoret:
-            s = bri8.BRI410_8(bytes.fromhex(v["celesi"]), v["raunde"], bytes.fromhex(v["numri"]))
-            self.assertEqual(s.kripto(bytes.fromhex(v["mesazhi"])).hex(), v["kriptuar"])
+        """Regresion: vektoret_f5.json (v1.0, të ngrirë në F5) dhe vektoret_f5_v11.json (v1.1) nuk ndryshojnë pa qëllim."""
+        for skedari, versioni in (("vektoret_f5.json", "1.0"), ("vektoret_f5_v11.json", "1.1")):
+            vektoret = json.loads(Path(__file__).with_name(skedari).read_text(encoding="utf-8"))
+            self.assertEqual(len(vektoret), 12)
+            for v in vektoret:
+                s = bri8.BRI410_8(bytes.fromhex(v["celesi"]), v["raunde"], bytes.fromhex(v["numri"]),
+                                  versioni=versioni)
+                self.assertEqual(s.kripto(bytes.fromhex(v["mesazhi"])).hex(), v["kriptuar"])
 
     def test_para_numrit_jep_te_njejtin_rezultat(self):
         rng = random.Random(95)

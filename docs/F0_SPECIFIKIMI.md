@@ -185,8 +185,14 @@ Matim R₁ (difuzioni i plotë), R₂ (kufiri i S-box-eve aktive kalon 128) dhe 
 **Orari (80 bajte = 10 rreshta × 8)**
 - Ngarkimi: bitet 0..409 = çelësi; bitet 410..639 = 230 bitët e ulët të `SHAKE-256("BRI-410/8 mbushja")` (29 bajte, little-endian).
 - Hapi `F_i`: S mbi 80 bajte → θ (M) mbi 10 rreshta → bajti `j` shkon te `9·j mod 80` → `bajti[79] ⊕= i`.
-- Numri: `F_{F0..F3}` → `bajtet[0..15] ⊕= numri` → `F_{F4..F7}`.
-- `RK_0` = bajtet 0..63 pas kësaj. `RK_i` = bajtet 0..63 pas `F_i`. Lëvizja e raundit `i` nga bajti 64:
+- **v1.1 (zyrtar që nga 2026-10-27, F8):** `K* = F_{F0..F3}(çelësi)` → `X = K*` me `bajtet[0..15] ⊕= numri` →
+  `G_0 = F_{F4..FB}(X) ⊕ X` (**8 hapa + feed-forward**). Qëllimi: edhe sikur të zbulohet gjendja e plotë e një
+  blloku, të mos kthehet mbrapsht te `K*`, i cili është i përbashkët për të gjitha blloqet. Kthimi i drejtpërdrejtë
+  nuk funksionon më (F8), por pakthyeshmëria e `X → F(X) ⊕ X` është **hamendje, jo provë**.
+- `RK_0` = bajtet 0..63 të `G_0` (çelësi i zbardhjes); `RK_i` = bajtet 0..63 të `G_i` për i = 1..16.
+- v1.0 (F5–F7, historik): `F_{F0..F3}` → `bajtet[0..15] ⊕= numri` → `F_{F4..F7}`, pa feed-forward. U zëvendësua sepse
+  3 çelësa raundesh të njëpasnjëshëm të një blloku jepnin çelësin kryesor në 0,1 s (F7, K).
+- `RK_0` = bajtet 0..63 të `G_0`. `RK_i` = bajtet 0..63 pas `F_i`. Lëvizja e raundit `i` nga bajti 64:
   drejtimi = `DREJTIMET[b & 3]`, β = `(b >> 2) & 7`.
 
 **Kriptimi:** si §5, me S, π, θ të mësipërm dhe 16 raunde. **Dekriptimi:** `⊕ RK_i → θ⁻¹ → π_i⁻¹ → S⁻¹`.

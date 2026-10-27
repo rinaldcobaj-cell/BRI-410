@@ -1,0 +1,293 @@
+{
+  "D_diferenciale": {
+    "DDT_shperndarja": {
+      "0": 32895,
+      "2": 32130,
+      "4": 255
+    },
+    "log2_prob_max_sbox": -6.0,
+    "diferenca_e_shkurtuar_zero_bajte": {
+      "R1": {
+        "mes": 56.0,
+        "min": 56,
+        "max": 56,
+        "n": 300
+      },
+      "R2": {
+        "mes": 0.0,
+        "min": 0,
+        "max": 0,
+        "n": 300
+      },
+      "R3": {
+        "mes": 0.2867,
+        "min": 0,
+        "max": 2,
+        "n": 300
+      }
+    },
+    "pritja_rastesore_zero_bajte": 0.25,
+    "nje_raund_kundrejt_DDT": [
+      {
+        "frekuenca_max": 0.0161,
+        "pritur_nga_DDT": 0.0156,
+        "dalje_te_ndryshme": 127,
+        "pritur_dalje": 127
+      },
+      {
+        "frekuenca_max": 0.0157,
+        "pritur_nga_DDT": 0.0156,
+        "dalje_te_ndryshme": 127,
+        "pritur_dalje": 127
+      },
+      {
+        "frekuenca_max": 0.0142,
+        "pritur_nga_DDT": 0.0156,
+        "dalje_te_ndryshme": 127,
+        "pritur_dalje": 127
+      }
+    ],
+    "sekonda": 1.3
+  },
+  "K_orari": {
+    "ortek_celesi_RK": {
+      "0": {
+        "mes": 0.4999,
+        "min": 0.4297,
+        "max": 0.5723,
+        "n": 1230
+      },
+      "1": {
+        "mes": 0.5002,
+        "min": 0.4082,
+        "max": 0.5723,
+        "n": 1230
+      },
+      "2": {
+        "mes": 0.5,
+        "min": 0.4102,
+        "max": 0.5898,
+        "n": 1230
+      },
+      "4": {
+        "mes": 0.4998,
+        "min": 0.4297,
+        "max": 0.5781,
+        "n": 1230
+      },
+      "8": {
+        "mes": 0.5001,
+        "min": 0.4316,
+        "max": 0.5703,
+        "n": 1230
+      },
+      "16": {
+        "mes": 0.4996,
+        "min": 0.4375,
+        "max": 0.582,
+        "n": 1230
+      }
+    },
+    "levizjet_qe_ndryshojne_mes": 0.9701,
+    "celesa_me_strukture": {
+      "zero": {
+        "RK_fraksioni_i_njeshave": 0.5018,
+        "dalja_monobit_z": 0.04,
+        "dalja_bajte_chi2": 221.7
+      },
+      "njesha": {
+        "RK_fraksioni_i_njeshave": 0.5031,
+        "dalja_monobit_z": 0.255,
+        "dalja_bajte_chi2": 258.5
+      },
+      "vetem_biti_0": {
+        "RK_fraksioni_i_njeshave": 0.5121,
+        "dalja_monobit_z": -0.507,
+        "dalja_bajte_chi2": 262.7
+      },
+      "0x55": {
+        "RK_fraksioni_i_njeshave": 0.5039,
+        "dalja_monobit_z": 0.221,
+        "dalja_bajte_chi2": 275.3
+      },
+      "rrites": {
+        "RK_fraksioni_i_njeshave": 0.4995,
+        "dalja_monobit_z": 1.975,
+        "dalja_bajte_chi2": 217.6
+      }
+    },
+    "pragu_chi2_bajte_99": 310.5,
+    "rikthimi_nga_3_RK_te_njepasnjeshem": [
+      {
+        "i": 9,
+        "sukses": true,
+        "kandidate": 1,
+        "sekonda": 0.1
+      },
+      {
+        "i": 14,
+        "sukses": true,
+        "kandidate": 1,
+        "sekonda": 0.1
+      },
+      {
+        "i": 2,
+        "sukses": true,
+        "kandidate": 1,
+        "sekonda": 0.1
+      }
+    ],
+    "bajte_te_panjohura_me_2_RK_te_njepasnjeshem": 3,
+    "sekonda": 6.8
+  },
+  "T_te_zgjedhura": {
+    "diferenca_e_kombinuar_mesazh_dhe_numer_zero_bajte": {
+      "hapa_0_R1": {
+        "mes": 56.495,
+        "min": 56,
+        "max": 57,
+        "n": 200
+      },
+      "hapa_0_R2": {
+        "mes": 0.585,
+        "min": 0,
+        "max": 13,
+        "n": 200
+      },
+      "hapa_0_R3": {
+        "mes": 0.27,
+        "min": 0,
+        "max": 2,
+        "n": 200
+      },
+      "hapa_4_R1": {
+        "mes": 0.2,
+        "min": 0,
+        "max": 2,
+        "n": 200
+      },
+      "hapa_4_R2": {
+        "mes": 0.32,
+        "min": 0,
+        "max": 3,
+        "n": 200
+      },
+      "hapa_4_R3": {
+        "mes": 0.205,
+        "min": 0,
+        "max": 2,
+        "n": 200
+      }
+    },
+    "pritja_rastesore_zero_bajte": 0.25,
+    "statistikat_16_raunde": {
+      "blloqe": 10000,
+      "numri_numerues_mesazhi_zero": {
+        "monobit_z": 0.109,
+        "vargjet_z": 0.036,
+        "bajte_chi2": 260.1,
+        "nibla_chi2": 12.4
+      },
+      "mesazhi_numerues_numri_fiks": {
+        "monobit_z": 1.283,
+        "vargjet_z": 1.296,
+        "bajte_chi2": 257.2,
+        "nibla_chi2": 22.5
+      },
+      "pragjet_99": {
+        "z": 2.576,
+        "bajte_chi2": 310.5,
+        "nibla_chi2": 30.6
+      }
+    },
+    "sekonda": 5.9
+  },
+  "A_algjebrike": {
+    "ekuacione_kuadratike_sbox_bri8": 39,
+    "ekuacione_kuadratike_sbox_aes": 39,
+    "struktura_lineare_sbox_bri8": 0,
+    "shkalla_sbox": 7,
+    "kufiri_naiv_i_shkalles_pas_r_raundeve": {
+      "1": 7,
+      "2": 49,
+      "3": 343,
+      "4": 511
+    },
+    "kubet_bite_zero_nga_512_rastesia_256": {
+      "8_bit_ne_nje_bajt_R2": [
+        512,
+        512
+      ],
+      "8_bit_ne_nje_bajt_R3": [
+        512,
+        512
+      ],
+      "8_bit_ne_nje_bajt_R4": [
+        241,
+        264
+      ],
+      "8_bit_te_shperndare_R2": [
+        512,
+        512
+      ],
+      "8_bit_te_shperndare_R3": [
+        236,
+        263
+      ],
+      "8_bit_te_shperndare_R4": [
+        247,
+        255
+      ],
+      "12_bit_te_shperndare_R2": [
+        512,
+        512
+      ],
+      "12_bit_te_shperndare_R3": [
+        259,
+        234
+      ],
+      "12_bit_te_shperndare_R4": [
+        258,
+        248
+      ],
+      "16_bit_te_shperndare_R2": [
+        512,
+        512
+      ],
+      "16_bit_te_shperndare_R3": [
+        512,
+        257
+      ],
+      "16_bit_te_shperndare_R4": [
+        258,
+        232
+      ]
+    },
+    "sistemi_16_raunde": {
+      "sbox_shifra": 1024,
+      "sbox_orari": 1920,
+      "ekuacione_kuadratike_perafersisht": 114816,
+      "ndryshore_perafersisht": 23962
+    },
+    "sekonda": 14.6
+  },
+  "L_lineare": {
+    "lineariteti_sbox": 32,
+    "log2_korr_max_sbox": -3.0,
+    "mostra": 262144,
+    "baza_rastesore_korr_max": 0.0086,
+    "R1": {
+      "hyrja_bajti_0_dalja_bajti_0": 0.00816,
+      "hyrja_bajti_0_dalja_bajti_37": 0.0095
+    },
+    "R2": {
+      "hyrja_bajti_0_dalja_bajti_0": 0.00865,
+      "hyrja_bajti_0_dalja_bajti_37": 0.00894
+    },
+    "R3": {
+      "hyrja_bajti_0_dalja_bajti_0": 0.00879,
+      "hyrja_bajti_0_dalja_bajti_37": 0.00826
+    },
+    "sekonda": 17.0
+  }
+}

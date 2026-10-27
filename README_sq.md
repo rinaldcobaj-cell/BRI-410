@@ -4,8 +4,13 @@ Shifër blloku **studimi** e frymëzuar nga shahu. **Nuk është për përdorim 
 
 Autori: **Rinald Cobaj**. Licenca: **CC0 1.0** (domen publik, shih `LICENSE`). BRI-410 nuk është i patentuar.
 
-**BRI-410 zyrtar = BRI-410/8:** tabelë 8×8 me kuti 8-bitëshe (bllok 512 bit), çelës 410 bit (≈ 10^123 "lojëra"),
-lojë e re për çdo bllok ("çdo lojë luhet vetëm një herë"), 16 raunde ("16 gurët e çdo lojtari").
+**BRI-410 zyrtar = BRI-410/8 v1.1:** tabelë 8×8 me kuti 8-bitëshe (bllok 512 bit), çelës 410 bit (≈ 10^123 "lojëra"),
+lojë e re për çdo bllok ("çdo lojë luhet vetëm një herë"), 16 raunde ("16 gurët e çdo lojtari"). Te v1.1, futja e numrit
+bëhet me 8 hapa dhe feed-forward (docs/F8_RAPORTI.md).
+
+**Punimi:** `publikim/paper/BRI-410_v2.pdf` (anglisht) dhe `BRI-410_v2_shqip.pdf` (shqip). **Historiku:** versioni v1.0 dhe punimi i
+parë (`BRI-410.pdf`) mbeten publikë me qëllim (etiketa git `v1.0`), sepse zbulimi dhe korrigjimi i dobësisë K janë pjesë e historisë
+shkencore të BRI-410.
 
 **Përdorimi (mesazhe të çdo gjatësie, me vulë 416 bit):**
 

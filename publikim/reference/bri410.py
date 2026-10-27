@@ -3,7 +3,10 @@
 Author: Rinald Cobaj. License: CC0 1.0 Universal (public domain), see LICENSE. BRI-410 is not patented.
 
 BRI-410/8 is a tweakable block cipher with a 512-bit block (8x8 board of bytes), a 410-bit key,
-a 128-bit tweak ("every game is played only once") and 16 rounds.
+a 128-bit tweak ("every game is played only once") and 16 rounds. This file implements version 1.1:
+the tweak is injected with 8 mixing steps and a feed-forward, designed so that the round keys of one
+tweak do not reveal the state shared by all tweaks. This one-wayness is a conjecture, not a proven
+property. Version 1.0 used 4 steps without feed-forward.
 BRI-410 AE is the ThetaCB3 authenticated-encryption mode on top of it, with a 416-bit tag.
 
 STUDY CIPHER. Not analysed by independent cryptanalysts yet. DO NOT USE TO PROTECT REAL DATA.
@@ -27,7 +30,8 @@ ROUNDS = 16
 NONCE_BYTES = 12
 TAG_BYTES = 52
 STATE_BYTES = 80          # key-schedule state: 10 rows of 8 bytes
-MIX_CONSTANT = 0xF0       # step constants of the tweak injection: 0xF0..0xF7
+MIX_CONSTANT = 0xF0       # step constants of the key/tweak mixing: 0xF0..0xFB
+VERSION = "1.1"
 
 # ---------------------------------------------------------------- GF(2^8), polynomial x^8+x^4+x^3+x+1
 
@@ -176,10 +180,12 @@ def schedule(key: bytes, tweak: bytes, rounds: int = ROUNDS) -> list[tuple[list[
     g = list((k | (_PADDING << KEY_BITS)).to_bytes(STATE_BYTES, "little"))
     for j in range(4):
         g = _step(g, MIX_CONSTANT + j)
-    g = [v ^ (tweak[j] if j < TWEAK_BYTES else 0) for j, v in enumerate(g)]
-    for j in range(4, 8):
+    x = [v ^ (tweak[j] if j < TWEAK_BYTES else 0) for j, v in enumerate(g)]   # X = K* xor tweak
+    g = x
+    for j in range(4, 12):
         g = _step(g, MIX_CONSTANT + j)
-    out = [(g[:BLOCK_BYTES], None)]
+    g = [a ^ b for a, b in zip(g, x)]                                          # feed-forward: G_0 = F(X) xor X
+    out = [(g[:BLOCK_BYTES], None)]                                            # RK_0 = bytes 0..63 of G_0
     for i in range(1, rounds + 1):
         g = _step(g, i)
         out.append((g[:BLOCK_BYTES], knight_permutation(DIRECTIONS[g[64] & 3], (g[64] >> 2) & 7)))

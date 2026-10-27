@@ -14,8 +14,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle,
-                                XPreformatted)
+from reportlab.platypus import (KeepTogether, ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer, Table,
+                                TableStyle, XPreformatted)
 
 DOSJA = Path(__file__).resolve().parent
 FONTET = Path(r"C:\Windows\Fonts")
@@ -26,7 +26,7 @@ pdfmetrics.registerFont(TTFont("Mono", str(FONTET / "consola.ttf")))
 pdfmetrics.registerFont(TTFont("Sym", str(FONTET / "seguisym.ttf")))
 pdfmetrics.registerFontFamily("Body", normal="Body", bold="Body-B", italic="Body-I", boldItalic="Body-B")
 
-SIMBOLET = "∈∪⊕⌊⌋"  # mungojnë te Segoe UI dhe Consolas → Segoe UI Symbol
+SIMBOLET = "∈∪⊕⌊⌋∎"  # mungojnë te Segoe UI dhe Consolas → Segoe UI Symbol
 
 BAZA = ParagraphStyle("baza", fontName="Body", fontSize=10, leading=14, spaceAfter=6)
 STILET = {
@@ -40,6 +40,7 @@ STILET = {
     "h3": ParagraphStyle("h3", parent=BAZA, fontName="Body-B", fontSize=11, leading=15, spaceBefore=8, spaceAfter=4,
                          keepWithNext=1),
     "liste": ParagraphStyle("liste", parent=BAZA, spaceAfter=2.5),
+    "para_listes": ParagraphStyle("para_listes", parent=BAZA, keepWithNext=1),  # paragrafi që mbaron me ":"
     "referenca": ParagraphStyle("referenca", parent=BAZA, fontSize=8.8, leading=11.5, spaceAfter=1.5),
     "qeliza": ParagraphStyle("qeliza", parent=BAZA, fontSize=8.5, leading=11, spaceAfter=0),
     "kodi": ParagraphStyle("kodi", fontName="Mono", fontSize=7.6, leading=10, leftIndent=8, backColor=colors.HexColor("#f4f4f4"),
@@ -112,7 +113,9 @@ def ndertoj(md: Path, pdf: Path, fundi: str = "BRI-410 — draft — study ciphe
 
     def mbyll_paragrafin():
         if paragrafi:
-            historia.append(Paragraph(_rresht(" ".join(paragrafi)), BAZA))
+            teksti = " ".join(paragrafi)
+            stili = STILET["para_listes"] if teksti.rstrip("*").endswith(":") else BAZA
+            historia.append(Paragraph(_rresht(teksti), stili))
             paragrafi.clear()
 
     while i < len(rreshtat):
@@ -143,7 +146,12 @@ def ndertoj(md: Path, pdf: Path, fundi: str = "BRI-410 — draft — study ciphe
                 else:
                     elementet[-1] += " " + rreshtat[i].strip()
                 i += 1
-            historia.append(_lista(elementet, e_numeruar))
+            # titulli dhe/ose fjalia me ":" që i paraprijnë listës nuk ndahen prej saj
+            bashke = [_lista(elementet, e_numeruar)]
+            while (historia and isinstance(historia[-1], Paragraph)
+                   and historia[-1].style.name in ("para_listes", "h2", "h3")):
+                bashke.insert(0, historia.pop())
+            historia.append(KeepTogether(bashke) if len(bashke) > 1 else bashke[0])
         elif r.startswith("# "):
             mbyll_paragrafin()
             historia.append(Paragraph(_rresht(r[2:]), STILET["titulli"]))
@@ -186,7 +194,15 @@ def ndertoj(md: Path, pdf: Path, fundi: str = "BRI-410 — draft — study ciphe
 
 
 if __name__ == "__main__":
-    ndertoj(DOSJA / "BRI-410.md", DOSJA / "BRI-410.pdf")
-    ndertoj(DOSJA / "BRI-410_shqip.md", DOSJA / "BRI-410_shqip.pdf",
-            "BRI-410 — përkthim në shqip për autorin (versioni për publikim: anglisht)")
-    print("BRI-410.pdf dhe BRI-410_shqip.pdf u ndërtuan")
+    import sys
+    if sys.argv[1:] == ["v1"]:  # versioni 1 (i dërguar në IACR më 2026-10-22); mos e rindërto pa nevojë
+        ndertoj(DOSJA / "BRI-410.md", DOSJA / "BRI-410.pdf")
+        ndertoj(DOSJA / "BRI-410_shqip.md", DOSJA / "BRI-410_shqip.pdf",
+                "BRI-410 — përkthim në shqip për autorin (versioni për publikim: anglisht)")
+        print("v1: BRI-410.pdf dhe BRI-410_shqip.pdf u ndërtuan")
+    else:
+        ndertoj(DOSJA / "BRI-410_v2.md", DOSJA / "BRI-410_v2.pdf",
+                "BRI-410 v1.1 — paper version 2 — study cipher, not for real use")
+        ndertoj(DOSJA / "BRI-410_v2_shqip.md", DOSJA / "BRI-410_v2_shqip.pdf",
+                "BRI-410 v1.1 — versioni 2 në shqip, për autorin (për publikim: anglisht)")
+        print("v2: BRI-410_v2.pdf dhe BRI-410_v2_shqip.pdf u ndërtuan")

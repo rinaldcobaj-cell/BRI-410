@@ -11,8 +11,16 @@ nxirren nga (çelësi, numri unik), si te V-N.
 Gjendja e orarit: 80 bajte = 10 rreshta × 8.
   bitet 0..409: çelësi; bitet 410..639: konstante publike nga SHAKE-256 (plotësojnë gjendjen)
   hapi F_i: S mbi 80 bajte → MDS mbi 10 rreshta → permutim j → p·j mod 80 → bajti 79 ⊕= i
-  ngarkimi me numër: 4 hapa (0xF0..0xF3) → bajtet 0..15 ⊕= numri → 4 hapa (0xF4..0xF7)
-  RK_i = bajtet 0..63 pas hapit i; lëvizja e raundit i = bajti 64 (drejtimi: 2 bit, β: 3 bit)
+  K* = F_0xF3(…F_0xF0(çelësi)): 4 hapa që varen vetëm nga çelësi (të përbashkët për të gjitha blloqet)
+  X  = K* me bajtet 0..15 ⊕= numri
+  v1.0: G_0 = F_0xF7(…F_0xF4(X))                 (4 hapa; i kthyeshëm → nga G_0 del K*)
+  v1.1: G_0 = F_0xFB(…F_0xF4(X)) ⊕ X             (8 hapa + feed-forward, që synon ta bëjë kalimin
+                                                  G_0 → X të pakthyeshëm; hamendje, e paprovuar)
+  RK_0 = bajtet 0..63 të G_0; G_i = F_i(G_{i-1}); RK_i = bajtet 0..63 të G_i;
+  lëvizja e raundit i = bajti 64 i G_i (drejtimi: 2 bit, β: 3 bit)
+
+Versioni zyrtar është v1.1 (pas F7: me v1.0, tre çelësa raundesh të një blloku jepnin çelësin kryesor
+në 0,1 s, kështu që loja e një blloku zbulonte të gjitha blloqet). v1.0 mbahet për riprodhimin e F5–F7.
 """
 
 import hashlib
@@ -28,6 +36,8 @@ BAJTE_BLLOKU = 64
 NUMRI_BAJTE = 16
 KONSTANTJA_PERZIERJES = 0xF0
 RAUNDE_ZYRTARE = 16  # "16 gurët e çdo lojtari"; rregulli 2 × max(2, 6, 4–5) = 12 ≤ 16 (F5)
+VERSIONI = "1.1"
+VERSIONET = ("1.0", "1.1")
 _MBUSHJA = int.from_bytes(hashlib.shake_256(b"BRI-410/8 mbushja").digest(29), "little") & ((1 << 230) - 1)
 
 
@@ -74,26 +84,31 @@ def para_numrit(celesi: int) -> list[int]:
     return g
 
 
-def ngarko_me_numer(celesi: int, numri: bytes, para: list[int] | None = None) -> list[int]:
+def ngarko_me_numer(celesi: int, numri: bytes, para: list[int] | None = None,
+                    versioni: str = VERSIONI) -> list[int]:
+    """G_0 (shih përshkrimin e modulit). Te v1.1, feed-forward-i synon ta bëjë G_0 → X të pakthyeshëm (e paprovuar)."""
     if len(numri) != NUMRI_BAJTE:
         raise ValueError("numri unik duhet të ketë 16 bajte")
-    g = list(para) if para is not None else para_numrit(celesi)
+    if versioni not in VERSIONET:
+        raise ValueError(f"versioni duhet të jetë njëri nga {VERSIONET}")
+    x = list(para) if para is not None else para_numrit(celesi)
     for j in range(NUMRI_BAJTE):
-        g[j] ^= numri[j]
-    for j in range(4, 8):
+        x[j] ^= numri[j]
+    g = x
+    for j in range(4, 8 if versioni == "1.0" else 12):
         g = hapi(g, KONSTANTJA_PERZIERJES + j)
-    return g
+    return g if versioni == "1.0" else [a ^ b for a, b in zip(g, x)]
 
 
 def levizja_nga_gjendja(g: list[int]) -> tuple[tuple[int, int], int]:
     return DREJTIMET[g[64] & 3], (g[64] >> 2) & 7
 
 
-def orari(celesi: int, raunde: int, numri: bytes,
-          para: list[int] | None = None) -> list[tuple[list[int], tuple | None]]:
+def orari(celesi: int, raunde: int, numri: bytes, para: list[int] | None = None,
+          versioni: str = VERSIONI) -> list[tuple[list[int], tuple | None]]:
     if not 1 <= raunde < KONSTANTJA_PERZIERJES:
         raise ValueError("raundet duhet të jenë 1..239")
-    g = ngarko_me_numer(celesi, numri, para)
+    g = ngarko_me_numer(celesi, numri, para, versioni)
     rez = [(g[:BAJTE_BLLOKU], None)]
     for i in range(1, raunde + 1):
         g = hapi(g, i)
@@ -108,13 +123,15 @@ def gjenero_celes() -> bytes:
 
 
 class BRI410_8:
-    def __init__(self, celesi: bytes | int, raunde: int, numri: bytes, para: list[int] | None = None):
+    def __init__(self, celesi: bytes | int, raunde: int, numri: bytes, para: list[int] | None = None,
+                 versioni: str = VERSIONI):
         """`para` = para_numrit(çelësi), opsionale: kursen 4 hapa kur i njëjti çelës kripton shumë blloqe."""
         if isinstance(celesi, bytes):
             from .shifra import celesi_nga_bajtet
             celesi = celesi_nga_bajtet(celesi)
-        o = orari(celesi, raunde, numri, para)
+        o = orari(celesi, raunde, numri, para, versioni)
         self.raunde = raunde
+        self.versioni = versioni
         self._rk = [rk for rk, _ in o]
         self._levizjet = [lv for _, lv in o[1:]]
         p = [_LEVIZJET[lv] for lv in self._levizjet]

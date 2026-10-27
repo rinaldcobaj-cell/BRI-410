@@ -76,5 +76,6 @@ Të gjitha tekstet e formularit (titulli, abstrakti, fjalët kyçe, kategoria) j
 - [x] Fjalia e AI-së: e mbajtur, me ndarjen e qartë të roleve (idetë dhe vendimet = autori; AI = asistent)
 - [x] Licenca: **CC0 1.0** (`LICENSE` në rrënjë dhe te `publikim/reference/`), me deklaratën "nuk është i patentuar"
 - [x] PDF: `paper/BRI-410.pdf` (5 faqe). Nëse ndryshon `BRI-410.md`, rindërtoje me `python ndertoj_pdf.py` brenda `paper/`
-- [ ] (opsionale) depo në GitHub (`.gitignore` gati: përjashton `.venv/` dhe `__pycache__/`)
-- [ ] Dërgimi në IACR ePrint
+- [x] Depoja në GitHub: https://github.com/rinaldcobaj-cell/BRI-410 (u ngarkua me git më 2026-10-22, commit `d8b2614`)
+- [x] Dërgimi në IACR ePrint: u dërgua dhe u konfirmua më 2026-10-22 (ID e përkohshme xxxx/112761, licenca CC0, kategoria Secret-key cryptography). Pret shqyrtimin e redaktorëve.
+- [ ] Numri përfundimtar i ePrint-it (p.sh. 2026/xxxx): shtohet te README në GitHub
