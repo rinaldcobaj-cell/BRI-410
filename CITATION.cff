@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you analyse or use BRI-410, please cite it as below."
+title: "BRI-410: A 512-bit Tweakable Block Cipher with Key- and Tweak-Dependent Permutations"
+type: software
+authors:
+  - given-names: Rinald
+    family-names: Cobaj
+    affiliation: Independent researcher
+    email: vlorarino@gmail.com
+version: "1.1"
+date-released: "2026-10-27"
+license: CC0-1.0
+repository-code: "https://github.com/rinaldcobaj-cell/BRI-410"
+abstract: >-
+  BRI-410 is an experimental (study) tweakable block cipher with a 512-bit block,
+  a 410-bit key, a 128-bit tweak and 16 rounds, with BRI-410 AE, an instantiation
+  of the ThetaCB3 authenticated-encryption mode with a 416-bit tag. In every round,
+  the key and the tweak select the permutation layer from a family of 32
+  "knight-move" permutations that are diffusion-optimal in both directions. The
+  wide-trail bound of 81 active S-boxes over four rounds is proven for every
+  sequence of these permutations; it concerns individual differential
+  characteristics and linear trails, not the overall security of the cipher.
+  Version 1.0 is kept in the record: in it, three consecutive round keys of one
+  block revealed the master key. Version 1.1 fixes this with a Davies-Meyer
+  feed-forward. This archive contains the specification, the papers (version 1
+  and version 2), a reference implementation, test vectors and every analysis
+  script. BRI-410 has not been analysed by independent cryptanalysts and must not
+  be used to protect real data.
+keywords:
+  - tweakable block cipher
+  - substitution-permutation network
+  - wide-trail strategy
+  - key-dependent permutation
+  - authenticated encryption
+  - cryptanalysis
