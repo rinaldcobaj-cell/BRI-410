@@ -2,3 +2,8 @@
 .venv/
 __pycache__/
 *.pyc
+
+# Skedarët ndihmës të LaTeX-it
+publikim/paper/*.aux
+publikim/paper/*.log
+publikim/paper/*.out

@@ -1,0 +1,892 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage[hidelinks,pdftitle={BRI-410: A 512-bit Tweakable Block Cipher with Key- and Tweak-Dependent Permutations},pdfauthor={Rinald Cobaj}]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem*{corollary}{Corollary}
+
+\newcommand{\ev}[1]{\textup{\textsf{[#1]}}}
+\newcommand{\GF}{\mathrm{GF}}
+\newcommand{\RK}{\mathit{RK}}
+\newcommand{\shake}{\mathrm{SHAKE256}}
+\newcommand{\str}[1]{\text{\texttt{"#1"}}}
+\newcommand{\hx}[1]{\mathtt{#1}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\setlist{itemsep=2pt,topsep=4pt}
+\allowdisplaybreaks
+\renewcommand{\arraystretch}{1.15}
+
+\title{BRI-410: A 512-bit Tweakable Block Cipher\\with Key- and Tweak-Dependent Permutations}
+\author{Rinald Cobaj\\Independent researcher\\\texttt{vlorarino@gmail.com}}
+\date{Paper version 2.1, 5 November 2026}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{AI-use statement (IACR Policy on the Use of AI): Substantial AI contribution.}
+The design ideas and decisions are the author's: the chess analogy and the 410-bit key, the per-block
+``game played only once'', the change to 8-bit cells and 16 rounds, the 416-bit tag, the five
+categories of analysis, and the choice of the schedule change in v1.1. An AI model (Claude, by
+Anthropic), working under the author's direction, wrote the implementations, designed and ran the
+experiments and computations (including the CP-SAT model), developed the proofs and the cryptanalysis
+(including the weakness of Section~\ref{sec:weakness}), and wrote the text of this paper. The author
+reviewed the results and is responsible for the content.
+\end{minipage}}
+\end{center}
+
+\noindent\emph{This paper describes cipher version BRI-410 v1.1. BRI-410 is a study cipher: it has not been
+analysed by independent cryptanalysts and must not be used to protect real data. Version 2.1 has the same
+content as version 2 (27 October 2026), typeset with mathematical notation and with the AI-use statement above.}
+Code, test vectors and all analysis scripts: \url{https://github.com/rinaldcobaj-cell/BRI-410}. Archive:
+\url{https://doi.org/10.5281/zenodo.23693134}.
+
+\begin{abstract}
+BRI-410 is an experimental tweakable block cipher with a 512-bit block, a 410-bit key, a 128-bit tweak and
+16 rounds. It comes with BRI-410 AE, an instantiation of the $\Theta$CB3 authenticated-encryption mode with a
+416-bit tag. BRI-410 is a key-alternating substitution--permutation network on an $8\times 8$ array of bytes.
+It uses an 8-bit S-box affine-equivalent to the AES S-box and an $8\times 8$ Cauchy MDS matrix. Its distinctive
+feature is the permutation layer: in every round, the key and the tweak select a cell permutation from a family
+of 32 ``knight-move'' permutations, all of which are diffusion-optimal in both directions. We prove that the
+wide-trail bound of 81 active S-boxes over four rounds holds for every sequence of permutations from this
+family. For individual differential characteristics and linear trails, this gives at least 324 active S-boxes
+over 16 rounds. A CP-SAT model confirms the values for one to five rounds. This bound is not a proof of the
+overall security of BRI-410. All round keys and permutations are derived from the key and the tweak.
+Version 1.1 adds a Davies--Meyer feed-forward after tweak injection, intended to make the per-block derivation
+one-way, because in version 1.0 three consecutive round keys of a single block revealed the master key in
+0.1 seconds. That one-wayness is a conjecture, not a proven property. We document this weakness and the other
+negative results of the design process, among them a predecessor with 4-bit cells that we broke over 5 rounds.
+We report experiments in five categories of cryptanalysis, keep proofs, computations, experiments and
+conjectures apart, and list open problems for independent analysis. We do not claim any practical advantage
+over existing designs.
+\end{abstract}
+
+\section{Introduction}
+
+The rules of chess are public, yet a serious game almost never repeats. BRI-410 starts from this analogy: the
+algorithm is public, and the key, a ``game'', is secret. In addition, every encrypted block plays its own game,
+derived from the key and a per-block tweak. The $8\times 8$ board fixes the state. The knight's move gives the
+permutation layer. The key length comes from Allis's estimate of about $10^{123}$ games of chess~\cite{All94},
+since $\log_2 10^{123} \approx 408.6$. \textbf{This choice is symbolic.} We do not claim that security above
+256 bits has practical meaning, and our security target (Section~\ref{sec:claims}) is lower than $2^{410}$.
+
+The aim of this paper is not to propose a replacement for existing ciphers. It describes BRI-410 completely
+enough that independent cryptanalysts can analyse it, challenge it and, if possible, break it. It also records
+every weakness we found during the design.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item A complete specification of BRI-410 v1.1, a 512-bit tweakable block cipher with a 410-bit key and
+  128-bit tweak, and of BRI-410 AE (Sections~\ref{sec:spec} and~\ref{sec:ae}).
+\item A proof that the two-round (9) and four-round (81) wide-trail bounds on individual differential
+  characteristics and linear trails hold for every key- and tweak-dependent choice of the round permutations,
+  both for the cipher and for the key schedule (Section~\ref{sec:struct}).
+\item A record of the design process with its negative results. These include a useless parameter ($\alpha$),
+  a key-dependent ``game'' that hides only one bit per round at row level, a 4-bit-cell predecessor broken over
+  5 rounds, and an invertible key schedule in version 1.0, together with the change that addresses it
+  (Sections~\ref{sec:weakness} and~\ref{sec:history}).
+\item Experiments in five categories: differential, linear, algebraic, key schedule, and chosen
+  plaintext/tweak (Section~\ref{sec:exp}). Open problems and concrete targets for analysis are in
+  Section~\ref{sec:open}.
+\end{enumerate}
+
+\paragraph{Kinds of evidence.} Every statement is labelled:
+\begin{itemize}
+\item \ev{Proof}: a mathematical proof given in this paper;
+\item \ev{Computation}: an exact computer computation (exhaustive check or solver);
+\item \ev{Experiment}: a statistical or sample-based measurement;
+\item \ev{Estimate}: a complexity estimate that was not implemented;
+\item \ev{Conjecture}: a hypothesis we believe but cannot support with proof;
+\item \ev{Open}: a question we did not study.
+\end{itemize}
+
+\section{Related work and positioning}
+
+\paragraph{Tweakable block ciphers.} Liskov, Rivest and Wagner introduced tweakable block
+ciphers~\cite{LRW02}. The TWEAKEY framework~\cite{JNP14} processes the key and the tweak with a light, linear
+schedule. It underlies SKINNY~\cite{BJK+16} and Deoxys-BC~\cite{JNPS21}, which have 64- and 128-bit blocks and
+extensive public analysis. Threefish~\cite{FLS+10}, the block cipher of Skein, is the closest design in size: it
+has 256-, 512- and 1024-bit blocks and a 128-bit tweak, but it is an ARX design (addition, rotation, XOR) with
+72 rounds for the 512-bit block.
+
+\paragraph{Wide-block SPNs.} Rijndael supports 256-bit blocks~\cite{DR02}. Kalyna~\cite{OGK+15} is an SPN
+standard with 512-bit blocks and keys, 8-bit S-boxes and $8\times 8$ MDS matrices over $\GF(2^8)$, but without
+a tweak.
+
+\paragraph{Key-dependent components and rekeying.} Blowfish~\cite{Sch93} and Twofish~\cite{SKW+98} derive
+S-boxes from the key. Deriving a fresh key for every message or block is a known technique, analysed for example
+in~\cite{AB00}. The Davies--Meyer construction from hash functions adds a feed-forward so that the output is
+believed hard to invert when the underlying permutation is strong~\cite{PGV93}.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}lccccl>{\raggedright\arraybackslash}X@{}}
+\toprule
+Cipher & Block & Key & Tweak & Rounds & Structure & Tweak processing\\
+\midrule
+AES-256 & 128 & 256 & -- & 14 & SPN, 8-bit S-box, MDS & --\\
+Kalyna-512/512 & 512 & 512 & -- & 18 & SPN, 8-bit S-boxes, MDS & --\\
+Threefish-512 & 512 & 512 & 128 & 72 & ARX & added to subkeys\\
+SKINNY, Deoxys-BC & 64 / 128 & \multicolumn{2}{c}{(tweakey)} & 14--56 & SPN & linear TWEAKEY schedule\\
+\textbf{BRI-410 v1.1} & \textbf{512} & \textbf{410} & \textbf{128} & \textbf{16} & \textbf{SPN, 8-bit S-box, MDS} &
+\textbf{full re-derivation of all round keys and permutations, intended to be one-way (Davies--Meyer, not proven)}\\
+\bottomrule
+\end{tabularx}
+\caption{BRI-410 and related designs (sizes in bits).}
+\end{table}
+
+\paragraph{Positioning.} BRI-410 brings no gain in efficiency. Re-deriving the whole schedule for every block
+is slower than TWEAKEY (Section~\ref{sec:perf}). What we study is a different design point: a permutation layer
+that depends on the key and the tweak, chosen in every round from a family that is diffusion-optimal for every
+choice. As a result, the classical wide-trail bounds hold uniformly over all keys and tweaks. To our knowledge
+this exact combination has not been described before. Key-dependent components and tweak-dependent round keys
+as such are well known.
+
+\section{Specification of BRI-410 v1.1}\label{sec:spec}
+
+\subsection{Notation and parameters}
+
+\begin{itemize}
+\item \emph{Block:} 512 bits $=$ 64 bytes. Byte $i$ is cell $(r,k) = (\lfloor i/8\rfloor,\, i \bmod 8)$ of an
+  $8\times 8$ board; row $r$ consists of bytes $8r,\dots,8r+7$.
+\item \emph{Key:} 410 bits, given as 52 bytes in little-endian order whose 6 top bits are $0$.
+\item \emph{Tweak:} 128 bits (16 bytes).
+\item \emph{Rounds:} $R = 16$.
+\item \emph{Field:} $\GF(2^8) = \GF(2)[x]/(x^8 + x^4 + x^3 + x + 1)$. Bytes are identified with field elements;
+  $\oplus$ denotes addition (XOR) and $\|$ concatenation.
+\end{itemize}
+
+\subsection{Components}
+
+\paragraph{S-box $S$.} For $x \in \GF(2^8)$,
+\[
+  S(x) = A\cdot x^{-1} \oplus c, \qquad 0^{-1} := 0,
+\]
+where $A$ is an invertible $8\times 8$ matrix over $\GF(2)$ and $c$ is a byte. Row $i$ of $A$ is a byte $A_i$,
+and bit $i$ of $A\cdot y$ is the parity of $A_i \wedge y$. The 9 bytes $A_0\|\cdots\|A_7\|c$ are the output of
+$\shake(\str{BRI-410 S-box8 v1} \,\|\, n)$, where $n$ is the first 4-byte big-endian counter that gives an
+invertible $A$ and an S-box with no $x$ such that $S(x) = x$ or $S(x) = x \oplus \hx{FF}$. The result is $n=9$.
+The table of $S$ is in Appendix~\ref{app:const}.
+
+\paragraph{Permutation family $\pi$.} Let
+\[
+  D = \bigl((1,2),\,(1,-2),\,(-1,2),\,(-1,-2)\bigr),
+\]
+in this order. For $d = (d_r, d_k) \in D$ and $\beta \in \{0,\dots,7\}$, the permutation $\pi_{d,\beta}$ of the
+64 cells is
+\[
+  \pi_{d,\beta}(r,k) = \bigl(r + k\,d_r,\; k + k\,d_k + \beta\bigr) \bmod 8 .
+\]
+Cell $(r,k)$ makes $k$ knight jumps $(d_r,d_k)$ on a toroidal board, then the board shifts $\beta$ columns. This
+gives 32 permutations, all distinct.
+
+\paragraph{Linear layer $\theta$.} Each row, viewed as a vector in $\GF(2^8)^8$, is multiplied by the Cauchy
+matrix
+\[
+  M = (M_{ij})_{0\le i,j\le 7}, \qquad M_{ij} = \frac{1}{x_i \oplus y_j},
+\]
+with $x = (0,1,\dots,7)$ and $y = (145, 234, 150, 206, 98, 226, 235, 94)$, the first 8 distinct bytes outside
+$\{0,\dots,7\}$ of $\shake(\str{BRI-410 MDS8 v1})$. The matrices $M$ and $M^{-1}$ are in
+Appendix~\ref{app:const}.
+
+\subsection{Encryption and decryption}
+
+Let $P$ be the plaintext, $\RK_0,\dots,\RK_{16}$ the round keys and $\pi_1,\dots,\pi_{16}$ the permutations
+(Section~\ref{sec:schedule}). Encryption computes
+\begin{align*}
+  X &\gets P \oplus \RK_0, \\
+  X &\gets \theta\bigl(\pi_i(S(X))\bigr) \oplus \RK_i \qquad \text{for } i = 1,\dots,16, \\
+  C &\gets X .
+\end{align*}
+Here $S$ is applied to all 64 bytes, and $\pi_i$ moves the byte in cell $c$ of $S(X)$ to cell $\pi_i(c)$.
+Decryption applies $\oplus\RK_i$, $\theta^{-1}$, $\pi_i^{-1}$, $S^{-1}$ for $i = 16,\dots,1$, and finally
+$\oplus\RK_0$. All rounds are identical; the last round also applies $\theta$.
+
+\subsection{Key and tweak schedule (``the game'')}\label{sec:schedule}
+
+The schedule state $G$ has 80 bytes (10 rows of 8). For a byte constant $c$, one step is
+\[
+  F_c(G) = \sigma\bigl(\Theta(S(G))\bigr) \oplus c\, e_{79},
+\]
+where $S$ acts on all 80 bytes, $\Theta$ applies $\theta$ to each of the 10 rows, $\sigma$ moves byte $j$ to
+position $9j \bmod 80$, and $c\,e_{79}$ adds $c$ to byte 79. Let $\mathit{pad}$ be the first 230 bits of
+$\shake(\str{BRI-410/8 mbushja})$, read as a little-endian integer (Appendix~\ref{app:const}), and view the key
+$K$ as a 410-bit integer. From $K$ and the tweak $T$, version 1.1 computes
+\begin{align*}
+  L &= K + 2^{410}\,\mathit{pad} &&\text{(80 bytes, little-endian)},\\
+  K^* &= F_{\hx{F3}} \circ F_{\hx{F2}} \circ F_{\hx{F1}} \circ F_{\hx{F0}}(L)
+      &&\text{(key only; the same for every tweak)},\\
+  X &= K^* \oplus (T \,\|\, 0^{64}) &&\text{(the tweak is added to bytes } 0..15),\\
+  G_0 &= F_{\hx{FB}} \circ \cdots \circ F_{\hx{F4}}(X) \oplus X &&\text{(8 steps and a Davies--Meyer feed-forward)},\\
+  \RK_0 &= G_0[0..63] &&\text{(the whitening key)},
+\end{align*}
+and, for $i = 1,\dots,16$,
+\[
+  G_i = F_i(G_{i-1}), \qquad \RK_i = G_i[0..63], \qquad
+  \pi_i = \pi_{D[b \bmod 4],\; \lfloor b/4\rfloor \bmod 8}, \quad b = G_i[64].
+\]
+So there are 17 round keys $\RK_0,\dots,\RK_{16}$ and 16 permutations $\pi_1,\dots,\pi_{16}$. Each step
+evaluates 80 S-boxes; the cost of the schedule is given in Table~\ref{tab:cost}.
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Process & Steps & S-boxes\\
+\midrule
+Key preparation $K^*$, once per key and shared by all tweaks & 4 & 320\\
+Tweak mixing, per tweak & 8 & 640\\
+Round-key generation, per tweak & 16 & 1\,280\\
+Schedule for one tweak, without the shared preparation & 24 & 1\,920\\
+Schedule for the first tweak under a key, including the preparation & 28 & 2\,240\\
+\bottomrule
+\end{tabular}
+\caption{Cost of the key and tweak schedule of v1.1.}\label{tab:cost}
+\end{table}
+
+With the 1\,024 S-boxes of the 16 rounds, the first block under a key costs 3\,264 S-boxes, and every further
+block, which reuses $K^*$, costs 2\,944. The feed-forward is a design measure meant to make the map from $G_0$
+back to $X$ hard to invert. \textbf{We do not prove that it is one-way} (Conjecture~\ref{conj:isolation} in
+Section~\ref{sec:claims}).
+
+\paragraph{Version 1.0} (Sections~\ref{sec:exp} to~\ref{sec:attacks}, history) used 4 steps after the tweak and
+no feed-forward, $G_0 = F_{\hx{F7}} \circ \cdots \circ F_{\hx{F4}}(X)$, which is $4 + 16 = 20$ steps per tweak
+after the shared preparation, or 24 including it. The round function is the same in both versions.
+
+\section{BRI-410 AE}\label{sec:ae}
+
+BRI-410 AE instantiates $\Theta$CB3~\cite{KR11} with BRI-410/8 v1.1 as the tweakable block cipher $E$. Each call
+uses the tweak
+\[
+  N \,\|\, \mathrm{LE}_{32}\bigl(16\cdot \mathit{index} + \mathit{type}\bigr),
+\]
+that is, a 12-byte nonce $N$ followed by 4 bytes in little-endian order, with $\mathit{index} < 2^{28}$. We
+write $E^{N,i,t}$ for $E$ under this tweak. The types are: 0 message block; 1 mask of the final partial block;
+2 tag without a partial block; 3 tag with a partial block; 4 associated-data block; 5 final partial
+associated-data block. Associated data uses $N = 0^{96}$. Let $M = M_1\cdots M_m M_*$ and $A = A_1\cdots A_a A_*$
+with full 64-byte blocks $M_i, A_i$ and $|M_*|, |A_*| < 64$ bytes, and let $\mathit{pad}(x) = x \,\|\, \hx{80}
+\,\|\, \hx{00}\cdots\hx{00}$. With $\Sigma = M_1 \oplus \cdots \oplus M_m$:
+\begin{align*}
+  C_i &= E^{N,i,0}(M_i), \qquad i = 1,\dots,m,\\
+  \text{if } M_* \ne \varepsilon:\quad C_* &= M_* \oplus \mathrm{trunc}_{|M_*|}\bigl(E^{N,m,1}(0^{512})\bigr),
+     \qquad F = E^{N,m,3}\bigl(\Sigma \oplus \mathit{pad}(M_*)\bigr),\\
+  \text{otherwise:}\quad F &= E^{N,m,2}(\Sigma),\\
+  \mathit{Auth} &= \bigoplus_{i=1}^{a} E^{0,i,4}(A_i)\; \bigl[\oplus\, E^{0,a,5}\bigl(\mathit{pad}(A_*)\bigr)
+     \text{ if } A_* \ne \varepsilon\bigr],\\
+  \mathit{Tag} &= \mathrm{trunc}_{416}(F \oplus \mathit{Auth}),\\
+  \mathit{Packet} &= N \,\|\, C_1 \cdots C_m C_* \,\|\, \mathit{Tag}.
+\end{align*}
+Decryption returns nothing unless the tag verifies, and the comparison is constant-time. The correspondence with
+$\Theta$CB3 was checked by the author against the description of the mode, not by an independent party.
+\ev{Open}
+
+\section{Structural results}\label{sec:struct}
+
+\begin{lemma}[permutation family]\label{lem:perm}
+\ev{Proof} Each $\pi_{d,\beta}$ is a bijection, and it is diffusion-optimal in both directions: the 8 cells of
+any row go to 8 distinct rows, and the 8 cells that land in any row come from 8 distinct rows.
+\end{lemma}
+
+\begin{proof}
+The column map $k \mapsto k(1 + d_k) + \beta$ is a bijection of $\Z_8$, since $1 + d_k \in \{3, -1\}$ is odd.
+Given the column, the row map $r \mapsto r + k\,d_r$ is a bijection, so $\pi_{d,\beta}$ is a bijection. For a
+fixed source row $r$, the destination rows $r + k\,d_r$ $(k = 0,\dots,7)$ are distinct because $d_r = \pm 1$ is
+invertible modulo 8. For a destination row $q$, every column $k$ occurs exactly once among its cells, because the
+column map is a bijection. The source row of the cell with column $k$ is $q - k\,d_r$, and these rows are
+distinct.
+\end{proof}
+
+\begin{lemma}[the row shift $\alpha$ adds no structure]\label{lem:alpha}
+\ev{Proof} Let $T_\alpha$ be the row rotation $(r,k) \mapsto (r+\alpha, k)$. Then $T_\alpha$ commutes with $S$,
+with every $\pi_{d,\beta}$ and with $\theta$. Hence a round-dependent $T_\alpha$ inside the round only adds a
+final, key-dependent rotation of rows.
+\end{lemma}
+
+\begin{proof}
+$S$ acts cell by cell. For $\pi_{d,\beta}$, both $\pi_{d,\beta}\circ T_\alpha$ and $T_\alpha \circ \pi_{d,\beta}$
+map $(r,k)$ to $\bigl(r + \alpha + k\,d_r,\; k(1+d_k) + \beta\bigr)$. The layer $\theta$ applies the same matrix
+to every row. Therefore $T_\alpha$ can be moved to the end of the cipher, replacing $\RK_i$ with
+$T(\RK_i)$. We therefore removed $\alpha$; in an earlier version, measurements found 1\,792 pairs of ``game''
+variants that were equivalent up to $\alpha$.
+\end{proof}
+
+\begin{lemma}[MDS]\label{lem:mds}
+\ev{Proof + Computation} $M$ is MDS, and its differential and linear branch numbers are both 9.
+\end{lemma}
+
+\begin{proof}
+Every square submatrix of a Cauchy matrix is a Cauchy matrix, and its determinant is non-zero when the $x_i$ are
+distinct, the $y_j$ are distinct and $x_i \ne y_j$~\cite{MS77}. Hence $M$ is MDS and its differential branch
+number is 9. Since the dual of an MDS code is MDS, the linear branch number is also 9. We also checked all
+12\,869 square submatrices of $M$ and of $M^{-1}$ by computer: none is singular. $M$ has no column symmetry other
+than the identity.
+\end{proof}
+
+\begin{theorem}[bounds for every permutation sequence]\label{thm:bounds}
+\ev{Proof} Consider any differential (or linear) trail through $r$ rounds of BRI-410 with a non-zero input, for
+any key and any tweak. Then, for every sequence of permutations $\pi_i$ from the family,
+\begin{enumerate}[label=(\alph*)]
+\item any two consecutive rounds contain at least 9 active S-boxes, and
+\item any four consecutive rounds contain at least 81 active S-boxes.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Let $a_t$ be the number of active bytes at the input of the S-layer of round $t$, and let $\rho(\cdot)$ denote
+the number of active rows of a state.
+
+(a) $\theta_t$ acts row by row with branch number 9: for each active row at its input, the active input bytes
+plus the active output bytes number at least 9. The input bytes of $\theta_t$ are the S-outputs of round $t$,
+moved by $\pi_t$. Its output bytes are the S-inputs of round $t+1$, since adding the key does not change
+activity. Summing over the rows gives
+\[
+  a_t + a_{t+1} \;\ge\; 9\,\rho(\text{input of } \theta_t) \;\ge\; 9 .
+\]
+
+(b) Take rounds 1 to 4 and write $\rho_t = \rho(\text{input of } \theta_t)$. By (a),
+$a_1 + a_2 \ge 9\rho_1$ and $a_3 + a_4 \ge 9\rho_3$. Let $q$ be any active row at the input of $\theta_2$. It has
+$w_{\mathrm{in}}$ active bytes, and its image row at the output of $\theta_2$ has $w_{\mathrm{out}}$ active bytes,
+with $w_{\mathrm{in}} + w_{\mathrm{out}} \ge 9$. The $w_{\mathrm{in}}$ bytes come, through $\pi_2$, from
+$w_{\mathrm{in}}$ distinct rows of the state at the input of round 2 (Lemma~\ref{lem:perm}, inverse direction).
+Each of these rows is an output row of $\theta_1$, so it is also active at the input of $\theta_1$; hence
+$\rho_1 \ge w_{\mathrm{in}}$. The $w_{\mathrm{out}}$ bytes of row $q$ are S-inputs of round 3, and $\pi_3$ sends
+them to $w_{\mathrm{out}}$ distinct rows (Lemma~\ref{lem:perm}, forward direction); hence
+$\rho_3 \ge w_{\mathrm{out}}$. Therefore
+\[
+  a_1 + a_2 + a_3 + a_4 \;\ge\; 9(\rho_1 + \rho_3) \;\ge\; 9(w_{\mathrm{in}} + w_{\mathrm{out}}) \;\ge\; 81 .
+\]
+The argument for linear trails is the same, with masks propagating through the transpose of $\theta$, which also
+has branch number 9 (Lemma~\ref{lem:mds}).
+\end{proof}
+
+\begin{corollary}
+$4k$ rounds contain at least $81k$ active S-boxes; in particular, 16 rounds contain at least 324.
+\end{corollary}
+
+\begin{theorem}[key and tweak schedule]\label{thm:schedule}
+\ev{Proof + Computation} The permutation $j \mapsto 9j \bmod 80$ of the schedule sends the 8 bytes of each of the
+10 rows to 8 distinct rows, and receives each row from 8 distinct rows \ev{Computation}. The proof of
+Theorem~\ref{thm:bounds} therefore applies to the steps $F_c$: any non-zero difference in the schedule state, in
+particular a difference in the tweak, activates at least 81 S-boxes in 4 steps and at least 162 in the 8 steps of
+v1.1 that precede $\RK_0$.
+\end{theorem}
+
+\paragraph{What these bounds guarantee, and what they do not.}
+\begin{itemize}
+\item They \textbf{guarantee} that every single differential characteristic, or linear trail, activates at least
+  the stated number of S-boxes, for every key, every tweak and every choice of permutations. With the maximal
+  S-box probability $2^{-6}$, any single 4-round trail has probability at most $(2^{-6})^{81} = 2^{-486}$ and any
+  16-round trail at most $2^{-1944}$, \textbf{under the usual assumption of independent round keys}.
+\item They \textbf{do not guarantee} anything about (i) differentials, where many trails add up, (ii) linear
+  hulls, (iii) the actual dependencies between round keys produced by the schedule, or (iv) attacks of other
+  kinds: integral, algebraic, boomerang, impossible-differential, or related-key beyond the schedule bound.
+\item In particular, Theorems~\ref{thm:bounds} and~\ref{thm:schedule} are \textbf{not a proof of the security of
+  BRI-410 as a whole}.
+\end{itemize}
+
+\paragraph{Computation. \ev{Computation}} A CP-SAT model at the level of active bytes, in which the adversary may
+choose the row structure of $\pi_i$ in every round (Appendix~\ref{app:cpsat}), returned the minimum number of
+active S-boxes: 1, 9, 17, 81 and 82 for 1 to 5 rounds (proven optimal), and 1, 9, 17, 81, 107 and 114 for 1 to 6
+schedule steps. For 6, 7 and 8 rounds it found trails with exactly 90, 98 and 162 active S-boxes, which equal
+the bounds that follow from Theorem~\ref{thm:bounds}. These values were computed once (OR-Tools 9.15,
+22 October 2026). Later runs on the author's machine were blocked by an operating-system application-control
+policy, so an independent re-run is welcome. The proofs above do not depend on this computation.
+
+\section{Experiments in five categories}\label{sec:exp}
+
+All experiments use fixed random seeds and are in the repository. Experiments marked ``v1.0'' were run before
+the schedule change. Experiments that only involve the round function under a fixed tweak (D, L, A) do not
+depend on how the round keys are derived. Experiments K and T were repeated for v1.1
+(Section~\ref{sec:weakness}).
+
+\subsection{Differential (D)}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+Measurement & Result & \\
+\midrule
+S-box difference table ($255 \times 256$ entries) & $32\,895\times 0$, $32\,130\times 2$, $255\times 4$;
+  maximal probability $2^{-6}$ & \ev{Computation}\\
+One round: most frequent output difference ($3\cdot 2^{14}$ pairs) & frequency 0.0161 / 0.0157 / 0.0142, against
+  $4/256 = 0.0156$ predicted; 127 distinct outputs, as predicted & \ev{Experiment}\\
+One active input byte: number of output bytes with zero difference (300 pairs; random: 0.25) & 1 round: 56;
+  2 rounds: 0 in every pair; 3 rounds: 0.29 & \ev{Experiment}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+After 2 rounds every byte is always active, which distinguishes 2 rounds from a random permutation, as for AES.
+We saw no deviation after 3 rounds.
+
+\subsection{Linear (L)}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+Measurement & Result & \\
+\midrule
+S-box: maximal correlation & $32/256 = 2^{-3}$ & \ev{Computation}\\
+One round, exact: only byte 0 varies (256 inputs), output byte 0 & maximal correlation 0.125, equal to the
+  S-box; a byte of another row does not change at all & \ev{Computation}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{Negative methodological result.} We first ran a statistical test that correlates one input byte with
+one output byte over $2^{18}$ random plaintexts. It is \textbf{uninformative by construction}: with all other
+input bytes random, an output byte is the XOR of 8 S-box outputs from 8 different input bytes, so the
+correlation is zero even after one round. We do not use it as evidence. Linear trails over two or more rounds
+have correlation at most $2^{-27}$ and cannot be measured experimentally. \textbf{The linear security argument
+rests on Theorem~\ref{thm:bounds}.}
+
+\subsection{Algebraic (A)}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+Measurement & Result & \\
+\midrule
+Linearly independent quadratic equations relating input and output of $S$ & 39, equal to the AES S-box with the
+  same code & \ev{Computation}\\
+Linear structures of $S$ & 0 & \ev{Computation}\\
+Size of a polynomial system that expresses one block in terms of the master key, v1.1 & 3\,264 S-boxes (1\,024 in
+  the cipher and 2\,240 in the schedule, the 4 key-only steps included; Section~\ref{sec:schedule}):
+  $\approx 127\,000$ quadratic equations (39 per S-box) in $\approx 26\,500$ variables (8 per S-box output plus
+  410 key bits). Further blocks under the same key add 2\,944 S-boxes each. This is a count, not an attack &
+  \ev{Computation}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{Cube tests \ev{Experiment}.} We computed the XOR-sum of the outputs over all values of $d$ chosen
+plaintext bits under a fixed tweak, and counted the output bits whose sum is zero (random: about 256 of 512).
+
+\begin{center}\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Cube & 2 rounds & 3 rounds & 4 rounds\\
+\midrule
+8 bits in one byte & 512, 512 & 512, 512 & 241, 264\\
+8 bits in 8 different bytes & 512, 512 & 236, 263 & 247, 255\\
+12 bits in 12 bytes & 512, 512 & 259, 234 & 258, 248\\
+16 bits in 16 bytes & 512, 512 & 512, 257 & 258, 232\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Explanation of the 3-round zero sums \ev{Proof}.} In round 1 each S-box sees at most one variable bit,
+so its output is affine in that bit. If $\pi_1$ puts at most $k$ cube bits in each row, the degree after round 2
+is at most $k$ and after round 3 at most $7k$. With $8k$ cube bits in total and $7k < 8k$, the sum is zero. We
+observed no zero sums over 4 rounds.
+
+\subsection{Key schedule (K)}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+Measurement & Result & \\
+\midrule
+One key bit flipped: bits changed in $\RK_0, \RK_1, \RK_8, \RK_{16}$ (v1.1, 820 trials) & 50.1\%, 50.1\%,
+  50.1\%, 50.0\% & \ev{Experiment}\\
+Permutation changes when one key bit flips (v1.0) & 97.0\%, against $1 - 1/32 = 96.9\%$ expected &
+  \ev{Experiment}\\
+Structured keys (zero, all ones, single bit, $\hx{55}\ldots$, counting; v1.0) & round keys 50--51\% ones; 3\,000
+  output blocks each: monobit $z \le 1.98$, byte $\chi^2$ 218--275 (99\% threshold 310.5) & \ev{Experiment}\\
+\textbf{Recovery of the master key from round keys} & v1.0: broken. v1.1: blocked for the direct method
+  (Section~\ref{sec:weakness}) & \ev{Experiment}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Chosen plaintext and chosen tweak (T)}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xl@{}}
+\toprule
+Measurement & Result (random: 0.25 bytes) & \\
+\midrule
+Tweak integral, v1.1 (one tweak byte takes all 256 values, plaintext fixed) after 1 / 2 / 16 rounds & 0--1 / 0--1
+  / 0--1 of 64 bytes balanced & \ev{Experiment}\\
+Tweak integral, v1.1 (two tweak bytes, 65\,536 tweaks), 1 round & 0 of 64 & \ev{Experiment}\\
+Joint difference in plaintext and tweak chosen to cancel the difference of $\RK_0$, v1.1, rounds 1 / 2 / 3 &
+  0.23 / 0.28 / 0.26 bytes with zero difference & \ev{Experiment}\\
+Same with \textbf{no} mixing after the tweak (weakened variant), rounds 1 / 2 / 3 & 56.5 / 0.59 / 0.27 &
+  \ev{Experiment}\\
+16 rounds, tweak $= 0, 1, 2, \dots$, plaintext 0, 10\,000 blocks (v1.1) & monobit $z = -0.74$, runs $z = 0.78$,
+  byte $\chi^2 = 261$, nibble $\chi^2 = 6.1$, all below the 99\% thresholds & \ev{Experiment}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Statistical tests detect only gross defects and are not evidence of security.
+
+\section{The key-schedule weakness of v1.0 and the change in v1.1}\label{sec:weakness}
+
+\subsection{The weakness}\label{sec:weakness71}
+
+In v1.0 every schedule step is a bijection, and the steps after the tweak have no feed-forward. \textbf{Given
+three consecutive round keys $\RK_i, \RK_{i+1}, \RK_{i+2}$ of one block, and its tweak, the master key follows
+immediately.} \ev{Experiment}
+\begin{enumerate}
+\item $\RK_i$ gives bytes $0..63$ of $G_i$. These determine the outputs of $\theta$ on rows $0..7$ of step $i+1$,
+  so 13 of the 16 bytes $64..79$ of $G_{i+1}$ are known. Bytes 70, 71 and 79 remain unknown.
+\item $\RK_{i+2}$ gives 6 byte equations on row 8 and 7 on row 9 of $G_{i+1}$. An exhaustive search over $2^{16}$
+  and $2^8$ values gives a unique $G_{i+1}$.
+\item The steps $F_i$ are inverted back to $G_0$. The 4 tweak-mixing steps are undone, the tweak is removed, and
+  the 4 key-only steps are undone. The 230 known padding bits confirm the key.
+\end{enumerate}
+In 3 out of 3 trials the master key was recovered in about 0.1\,s, with a single candidate. With \textbf{two}
+consecutive round keys, 3 bytes remain unknown: $2^{24}$ candidates, each verifiable through the padding bits
+\ev{Estimate}. Once the key is known, the round keys of \textbf{every} other tweak follow. The per-block ``game''
+therefore did not isolate blocks. This weakness does not break 16 rounds, since no method is known to obtain round
+keys there. It does mean that, in v1.0, any attack recovering two or three consecutive round keys of one block
+becomes a full break.
+
+\subsection{The change}
+
+Version 1.1 adds a Davies--Meyer feed-forward after the tweak injection and doubles the number of steps there from
+4 to 8: $G_0 = F(X) \oplus X$, with $F$ made of 8 steps and $X = K^* \oplus (T \,\|\, 0^{64})$. The state $G_0$ of
+an attacked block can still be reconstructed. But going from $G_0$ back to $X$ now requires inverting the map
+$X \mapsto F(X) \oplus X$, a preimage problem on 640 bits. The step-by-step inversion of the previous subsection
+no longer applies, because the feed-forward mixes the input into the output. \textbf{Whether the map can be
+inverted by other means is not proven either way}: the feed-forward is a design measure, and its one-wayness is
+Conjecture~\ref{conj:isolation}. The round function is unchanged.
+
+\subsection{Evaluation}
+
+\begin{center}\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Attack of Section~\ref{sec:weakness71} & $G_0$ of the & Master key & Round keys of\\
+(3 trials each) & attacked block & recovered & another tweak\\
+ & reconstructed & & predicted\\
+\midrule
+v1.0 & 3/3 & \textbf{3/3} & \textbf{3/3}\\
+v1.1 & 3/3 & \textbf{0/3} & \textbf{0/3}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cost: v1.1 is 13\% slower than v1.0 in our implementation (2\,295 against 2\,651 blocks per second, with a new
+tweak for every block and the key preparation $K^*$ shared).
+
+\textbf{This is not a proof.} The three failures show only that the direct inversion of Section~\ref{sec:weakness71} no longer
+works. They do not show that $F(X) \oplus X$ cannot be inverted by other methods, such as meet-in-the-middle or
+rebound techniques of the kind applied to AES-based hashing modes~\cite{Sas11}. Our hypothesis is stated as
+Conjecture~\ref{conj:isolation}.
+
+\section{Reduced-round attacks (fixed tweak)}\label{sec:attacks}
+
+\begin{lemma}[3-round integral distinguisher]\label{lem:integral}
+\ev{Proof + Experiment} Under a fixed tweak, take 256 plaintexts in which one byte takes all values and the rest is
+constant. After 3 rounds, every one of the 64 output bytes sums to zero.
+\end{lemma}
+
+\begin{proof}
+After round 1, the row that receives the active byte contains 8 bytes of the form $c \oplus m\cdot S(v)$ with
+$m \ne 0$, so each takes all 256 values. In round 2, $\pi_2$ sends these 8 bytes to 8 distinct rows
+(Lemma~\ref{lem:perm}). Each row then has one byte that takes all values and 7 constant bytes, so after $\theta$ all
+64 bytes take all values. In round 3, $\theta$ outputs XOR combinations of such bytes, so every output byte sums to
+zero. Adding the key keeps this property.
+\end{proof}
+
+Measured: 10 out of 10 trials were balanced after 2 and 3 rounds. After 4 rounds, 0--1 of 64 bytes were balanced,
+and 0--1 also with two aligned bytes ($2^{16}$ texts). With a fresh tweak per plaintext the property disappears
+\ev{Experiment}.
+
+\paragraph{4-round key recovery \ev{Experiment}.} Lemma~\ref{lem:integral}, together with guessing each byte of
+$\theta^{-1}(\RK_4)$ separately, recovered $\RK_4$ (512 bits) in 5 out of 5 trials with 512--768 chosen
+plaintexts and in under one second. This works because
+\[
+  \theta^{-1}(C) = \pi_4\bigl(S(X_3)\bigr) \oplus \theta^{-1}(\RK_4)
+\]
+and every byte of $X_3$ is balanced. \textbf{This attack recovers only $\RK_4$, not the master key.} Under v1.0,
+the master key would follow from three consecutive round keys of one block, or from two with about $2^{24}$ work
+(Section~\ref{sec:weakness}). Removing round 4 with the recovered $\RK_4$ and attacking the remaining rounds in
+the same way might also give $\RK_3$ and $\RK_2$, but we did not implement this. Whether a 4-round master-key
+recovery on v1.0 is practical therefore remains \ev{Open}. Under v1.1, round keys of one tweak do not lead to the
+master key by the direct method of Section~\ref{sec:weakness}.
+
+\paragraph{5 rounds \ev{Estimate}.} Adding one more round requires guessing 8 bytes of $\theta^{-1}(\RK_5)$ and
+one byte of $\theta^{-1}(\RK_4)$ per target byte: about $2^{72}$ guesses with $2^8$ texts, plus the unknown row
+structure of $\pi_4$ and $\pi_5$. Done naively, this is about $2^{80}$ S-box evaluations. Partial-sum techniques
+may reduce it. We did not implement this attack, and the estimate may be wrong in either direction.
+
+\paragraph{Margin.} The best attack we executed covers 4 of 16 rounds. Our rule of thumb
+$R \ge 2\max(R_1, R_2, R_3)$, a heuristic and not a proof, is satisfied. Here $R_1 = 2$ rounds to full diffusion,
+$R_2 = 6$ rounds until the best trail is below $2^{-512}$ (by Theorem~\ref{thm:bounds}), and $R_3 = 4$--$5$ rounds
+attacked, so $2\cdot 6 = 12 \le 16$.
+
+\section{Security claims and conjectures}\label{sec:claims}
+
+\paragraph{What is proven:} Lemmas~\ref{lem:perm}--\ref{lem:integral}, Theorems~\ref{thm:bounds}
+and~\ref{thm:schedule} and their corollaries, as stated, including their limits (Section~\ref{sec:struct}).
+
+\begin{conjecture}[security target]\label{conj:target}
+In the single-key setting, with chosen plaintexts, ciphertexts and tweaks (repeated tweaks included), 16-round
+BRI-410 v1.1 has no distinguishing or key-recovery attack with time below $2^{256}$ and data below $2^{128}$ blocks
+per key.
+\end{conjecture}
+
+This is a research hypothesis and an invitation to analysis, \textbf{not a demonstrated result}. We deliberately set
+this target far below the key length, and the key length remains 410 bits. The 410-bit key is a symbolic choice, and
+our analysis covers only the attack classes of Sections~\ref{sec:struct}--\ref{sec:attacks}.
+
+\begin{conjecture}[tweak isolation]\label{conj:isolation}
+The map $X \mapsto F(X) \oplus X$ with its 8 steps is one-way in practice. As a result, knowing all round keys and
+permutations for one tweak gives no practical advantage in computing those of another tweak or the master key.
+\end{conjecture}
+
+This is a hypothesis supported only by the design rationale and by the failure of the direct attack
+(Section~\ref{sec:weakness}).
+
+\paragraph{BRI-410 AE.} If Conjecture~\ref{conj:target} holds, the security theorem of $\Theta$CB3~\cite{KR11}
+gives confidentiality and authenticity against nonce-respecting adversaries. The forgery probability per attempt is
+about $2^{-416}$ plus the advantage against the cipher. Limits: messages of at most $2^{28} - 1$ blocks. With random
+96-bit nonces, at most $2^{32}$ messages per key, which keeps the probability of a repeated nonce around $2^{-33}$.
+
+\paragraph{Not claimed:}
+\begin{itemize}
+\item security against related keys;
+\item security of BRI-410 inside a hash function (known or chosen key);
+\item resistance to nonce reuse in BRI-410 AE (a repeated nonce reveals equal blocks);
+\item protection of the reference code against timing and other side channels (it is not constant-time).
+\end{itemize}
+
+\section{Design history and negative results}\label{sec:history}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X%
+>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.2cm}@{}}
+\toprule
+Version & Description & What we found & Action\\
+\midrule
+BRI-410/4, first design & 4-bit cells, 256-bit block, ``game'' ($\pi$) derived from the key only, $\alpha$
+  present & $\alpha$ commutes with the round (Lemma~\ref{lem:alpha}): 1\,792 equivalent pairs & $\alpha$ removed\\
+BRI-410/4, game per key & as above & the game hides only 1 bit per round at row level (the destination row depends
+  only on $d_r$) & documented\\
+BRI-410/4, game per key & as above & integral distinguisher over \textbf{4 rounds with $2^{12}$ texts},
+  \textbf{5-round key recovery in under 1\,s} & game per block (tweak) introduced: the same attack failed 0/3\\
+BRI-410/4 with tweak & 32 rounds & the 4-bit S-box (degree 3) lets the integral property survive one round more
+  than in AES-like designs & replaced by 8-bit cells\\
+BRI-410/8 v1.0 & 8-bit cells, 512-bit block, 16 rounds & invertible schedule: 3 round keys $\to$ master key in
+  0.1\,s (Section~\ref{sec:weakness}) & v1.1 (feed-forward, 8 steps)\\
+BRI-410/8 v1.1 & this paper & -- & open for analysis\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{Errors corrected from version 1 of this paper.}
+\begin{itemize}
+\item It stated a security claim at the level of $2^{410}$ that our analysis did not support.
+\item It called the second implementation ``independent'', although it was written separately by the same author.
+\item It called the CP-SAT values ``tight'' without saying that they are tight only within the model.
+\item It reported ``49.9\%'' for a value whose measurement is 49.8\%.
+\item It described cipher version v1.0.
+\end{itemize}
+
+\section{Reproducibility and performance}\label{sec:perf}
+
+The repository contains:
+\begin{itemize}
+\item the research implementation (Python, standard library);
+\item a separate single-file reference implementation in English, which agrees bit for bit with the research
+  implementation;
+\item test vectors for v1.0 and v1.1;
+\item 47 unit tests;
+\item every experiment script, with fixed seeds.
+\end{itemize}
+The CP-SAT model requires OR-Tools. In pure Python the implementation runs at about 2\,300 blocks per second with a
+new tweak for every block and the key preparation $K^*$ shared, and BRI-410 AE at about 150\,KB/s. A constant-time
+implementation in C is an open task.
+
+\section{Open problems and targets for analysis}\label{sec:open}
+
+\begin{enumerate}
+\item \textbf{Differential and linear:} clustering of differentials, linear hulls, boomerang and
+  impossible-differential attacks; re-running the CP-SAT bounds independently.
+\item \textbf{Algebraic and integral:} division-property analysis for 4 or more rounds, and algebraic attacks on
+  reduced rounds.
+\item \textbf{Key schedule:} preimages of $X \mapsto F(X) \oplus X$ with 8 steps (Conjecture~\ref{conj:isolation});
+  related-key attacks; whether reduced-round attacks lead to the master key.
+\item \textbf{Tweak:} related-tweak attacks that combine tweak and plaintext differences, including pairs whose
+  permutations differ.
+\item \textbf{Mode and implementation:} an independent check of the $\Theta$CB3 instantiation, and constant-time
+  implementations.
+\end{enumerate}
+
+\paragraph{Targets.} Distinguishers for 5, 6, 7 or 8 rounds; recovery of round keys for 5 to 8 rounds; recovery of
+the master key, or of the round keys of a second tweak, from those of one tweak, in either the fixed-tweak or the
+chosen-tweak setting. The author will acknowledge every result publicly.
+
+\section*{Intellectual property}
+
+BRI-410 is not patented, and the author does not intend to apply for any patent on it. The specification, the
+implementations, the test vectors and the analysis scripts are dedicated to the public domain under CC0~1.0.
+
+\section*{Use of AI}
+
+See the AI-use statement on the first page. Every result can be reproduced with the published code.
+
+\begin{thebibliography}{MWGP11}
+\bibitem[AB00]{AB00} M.~Abdalla, M.~Bellare. Increasing the lifetime of a key: a comparative analysis of the
+  security of re-keying techniques. \emph{ASIACRYPT 2000}.
+\bibitem[All94]{All94} L.~V.~Allis. \emph{Searching for Solutions in Games and Artificial Intelligence.} PhD
+  thesis, University of Limburg, Maastricht, 1994.
+\bibitem[BJK+16]{BJK+16} C.~Beierle, J.~Jean, S.~K\"olbl, G.~Leander, A.~Moradi, T.~Peyrin, Y.~Sasaki,
+  P.~Sasdrich, S.~M.~Sim. The SKINNY family of block ciphers and its low-latency variant MANTIS.
+  \emph{CRYPTO 2016}.
+\bibitem[BS91]{BS91} E.~Biham, A.~Shamir. Differential cryptanalysis of DES-like cryptosystems. \emph{Journal of
+  Cryptology}, 1991.
+\bibitem[DKR97]{DKR97} J.~Daemen, L.~Knudsen, V.~Rijmen. The block cipher Square. \emph{FSE 1997}.
+\bibitem[DR02]{DR02} J.~Daemen, V.~Rijmen. \emph{The Design of Rijndael.} Springer, 2002.
+\bibitem[FLS+10]{FLS+10} N.~Ferguson, S.~Lucks, B.~Schneier, D.~Whiting, M.~Bellare, T.~Kohno, J.~Callas,
+  J.~Walker. The Skein hash function family. SHA-3 submission, version 1.3, 2010.
+\bibitem[JNP14]{JNP14} J.~Jean, I.~Nikoli\'c, T.~Peyrin. Tweaks and keys for block ciphers: the TWEAKEY framework.
+  \emph{ASIACRYPT 2014}.
+\bibitem[JNPS21]{JNPS21} J.~Jean, I.~Nikoli\'c, T.~Peyrin, Y.~Seurin. The Deoxys AEAD family. \emph{Journal of
+  Cryptology}, 2021.
+\bibitem[KR11]{KR11} T.~Krovetz, P.~Rogaway. The software performance of authenticated-encryption modes.
+  \emph{FSE 2011}.
+\bibitem[LRW02]{LRW02} M.~Liskov, R.~Rivest, D.~Wagner. Tweakable block ciphers. \emph{CRYPTO 2002}.
+\bibitem[Mat93]{Mat93} M.~Matsui. Linear cryptanalysis method for DES cipher. \emph{EUROCRYPT 1993}.
+\bibitem[MS77]{MS77} F.~J.~MacWilliams, N.~J.~A.~Sloane. \emph{The Theory of Error-Correcting Codes.}
+  North-Holland, 1977.
+\bibitem[MWGP11]{MWGP11} N.~Mouha, Q.~Wang, D.~Gu, B.~Preneel. Differential and linear cryptanalysis using
+  mixed-integer linear programming. \emph{Inscrypt 2011}.
+\bibitem[OGK+15]{OGK+15} R.~Oliynykov, I.~Gorbenko, O.~Kazymyrov et al. A new encryption standard of Ukraine: the
+  Kalyna block cipher. \emph{Cryptology ePrint Archive}, 2015/650.
+\bibitem[PGV93]{PGV93} B.~Preneel, R.~Govaerts, J.~Vandewalle. Hash functions based on block ciphers: a synthetic
+  approach. \emph{CRYPTO 1993}.
+\bibitem[Sas11]{Sas11} Y.~Sasaki. Meet-in-the-middle preimage attacks on AES hashing modes and an application to
+  Whirlpool. \emph{FSE 2011}.
+\bibitem[Sch93]{Sch93} B.~Schneier. Description of a new variable-length key, 64-bit block cipher (Blowfish).
+  \emph{FSE 1993}.
+\bibitem[SKW+98]{SKW+98} B.~Schneier, J.~Kelsey, D.~Whiting, D.~Wagner, C.~Hall, N.~Ferguson. Twofish: a 128-bit
+  block cipher. AES submission, 1998.
+\bibitem[Sha50]{Sha50} C.~E.~Shannon. Programming a computer for playing chess. \emph{Philosophical Magazine}, 1950.
+\bibitem[Tod15]{Tod15} Y.~Todo. Structural evaluation by generalized integral property. \emph{EUROCRYPT 2015}.
+\end{thebibliography}
+
+\appendix
+
+\section{Constants}\label{app:const}
+
+\paragraph{S-box $S$} (row: high nibble, column: low nibble, hexadecimal).
+
+% BEGIN SBOX
+\begin{center}\small\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}c|cccccccccccccccc@{}}
+ & \textbf{\texttt{0}} & \textbf{\texttt{1}} & \textbf{\texttt{2}} & \textbf{\texttt{3}} & \textbf{\texttt{4}} & \textbf{\texttt{5}} & \textbf{\texttt{6}} & \textbf{\texttt{7}} & \textbf{\texttt{8}} & \textbf{\texttt{9}} & \textbf{\texttt{a}} & \textbf{\texttt{b}} & \textbf{\texttt{c}} & \textbf{\texttt{d}} & \textbf{\texttt{e}} & \textbf{\texttt{f}}\\
+\hline
+\textbf{\texttt{0}} & \texttt{15} & \texttt{86} & \texttt{4d} & \texttt{a2} & \texttt{24} & \texttt{91} & \texttt{fa} & \texttt{cd} & \texttt{75} & \texttt{c1} & \texttt{7e} & \texttt{8d} & \texttt{cb} & \texttt{c8} & \texttt{f6} & \texttt{34}\\
+\textbf{\texttt{1}} & \texttt{6d} & \texttt{f5} & \texttt{22} & \texttt{ff} & \texttt{a0} & \texttt{6a} & \texttt{80} & \texttt{12} & \texttt{ab} & \texttt{87} & \texttt{0b} & \texttt{9d} & \texttt{1f} & \texttt{56} & \texttt{5f} & \texttt{df}\\
+\textbf{\texttt{2}} & \texttt{2a} & \texttt{84} & \texttt{bf} & \texttt{1b} & \texttt{28} & \texttt{d5} & \texttt{36} & \texttt{30} & \texttt{1e} & \texttt{2f} & \texttt{33} & \texttt{6b} & \texttt{10} & \texttt{68} & \texttt{0c} & \texttt{99}\\
+\textbf{\texttt{3}} & \texttt{d3} & \texttt{fb} & \texttt{09} & \texttt{90} & \texttt{0f} & \texttt{ad} & \texttt{aa} & \texttt{42} & \texttt{9c} & \texttt{bd} & \texttt{c3} & \texttt{17} & \texttt{ea} & \texttt{62} & \texttt{38} & \texttt{7b}\\
+\textbf{\texttt{4}} & \texttt{45} & \texttt{8c} & \texttt{a9} & \texttt{39} & \texttt{40} & \texttt{83} & \texttt{25} & \texttt{3d} & \texttt{a1} & \texttt{be} & \texttt{b1} & \texttt{41} & \texttt{bb} & \texttt{6e} & \texttt{e6} & \texttt{a8}\\
+\textbf{\texttt{5}} & \texttt{d8} & \texttt{95} & \texttt{b8} & \texttt{b7} & \texttt{46} & \texttt{fd} & \texttt{77} & \texttt{5c} & \texttt{e8} & \texttt{14} & \texttt{d7} & \texttt{88} & \texttt{16} & \texttt{4b} & \texttt{13} & \texttt{7f}\\
+\textbf{\texttt{6}} & \texttt{ec} & \texttt{81} & \texttt{8f} & \texttt{d9} & \texttt{eb} & \texttt{32} & \texttt{3a} & \texttt{d1} & \texttt{b6} & \texttt{ef} & \texttt{8e} & \texttt{c9} & \texttt{97} & \texttt{9a} & \texttt{50} & \texttt{b9}\\
+\textbf{\texttt{7}} & \texttt{ee} & \texttt{72} & \texttt{a4} & \texttt{63} & \texttt{c6} & \texttt{66} & \texttt{f1} & \texttt{00} & \texttt{e1} & \texttt{53} & \texttt{5e} & \texttt{3f} & \texttt{8b} & \texttt{b2} & \texttt{5d} & \texttt{da}\\
+\textbf{\texttt{8}} & \texttt{49} & \texttt{57} & \texttt{c4} & \texttt{ce} & \texttt{37} & \texttt{d4} & \texttt{cf} & \texttt{af} & \texttt{b4} & \texttt{19} & \texttt{b0} & \texttt{e3} & \texttt{31} & \texttt{01} & \texttt{76} & \texttt{26}\\
+\textbf{\texttt{9}} & \texttt{5a} & \texttt{ba} & \texttt{04} & \texttt{03} & \texttt{70} & \texttt{f4} & \texttt{f0} & \texttt{47} & \texttt{f9} & \texttt{f8} & \texttt{8a} & \texttt{e0} & \texttt{35} & \texttt{4e} & \texttt{73} & \texttt{27}\\
+\textbf{\texttt{a}} & \texttt{21} & \texttt{43} & \texttt{c7} & \texttt{0a} & \texttt{59} & \texttt{e5} & \texttt{2d} & \texttt{78} & \texttt{e9} & \texttt{a3} & \texttt{d2} & \texttt{6c} & \texttt{89} & \texttt{e2} & \texttt{4a} & \texttt{94}\\
+\textbf{\texttt{b}} & \texttt{05} & \texttt{5b} & \texttt{51} & \texttt{cc} & \texttt{55} & \texttt{fe} & \texttt{7d} & \texttt{c0} & \texttt{b5} & \texttt{ca} & \texttt{79} & \texttt{93} & \texttt{48} & \texttt{db} & \texttt{e4} & \texttt{3c}\\
+\textbf{\texttt{c}} & \texttt{bc} & \texttt{ed} & \texttt{54} & \texttt{9f} & \texttt{64} & \texttt{60} & \texttt{65} & \texttt{82} & \texttt{a5} & \texttt{7a} & \texttt{02} & \texttt{2b} & \texttt{6f} & \texttt{98} & \texttt{08} & \texttt{71}\\
+\textbf{\texttt{d}} & \texttt{69} & \texttt{ac} & \texttt{1c} & \texttt{07} & \texttt{20} & \texttt{f7} & \texttt{4f} & \texttt{61} & \texttt{23} & \texttt{67} & \texttt{b3} & \texttt{f3} & \texttt{9e} & \texttt{a6} & \texttt{1d} & \texttt{29}\\
+\textbf{\texttt{e}} & \texttt{58} & \texttt{96} & \texttt{74} & \texttt{f2} & \texttt{a7} & \texttt{11} & \texttt{1a} & \texttt{9b} & \texttt{3b} & \texttt{52} & \texttt{e7} & \texttt{dc} & \texttt{06} & \texttt{85} & \texttt{c2} & \texttt{4c}\\
+\textbf{\texttt{f}} & \texttt{2c} & \texttt{44} & \texttt{3e} & \texttt{2e} & \texttt{ae} & \texttt{7c} & \texttt{92} & \texttt{de} & \texttt{dd} & \texttt{0d} & \texttt{d0} & \texttt{18} & \texttt{0e} & \texttt{fc} & \texttt{c5} & \texttt{d6}\\
+\end{tabular}
+\end{center}
+% END SBOX
+
+\paragraph{Matrices $M$ ($\theta$) and $M^{-1}$ ($\theta^{-1}$)} (hexadecimal, row by row).
+
+% BEGIN MDS
+\begin{center}\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}cccccccc@{}}
+\multicolumn{8}{c}{$M$}\\[2pt]
+\texttt{6a} & \texttt{d7} & \texttt{84} & \texttt{ac} & \texttt{af} & \texttt{d6} & \texttt{e3} & \texttt{61}\\
+\texttt{de} & \texttt{e3} & \texttt{72} & \texttt{e6} & \texttt{d3} & \texttt{eb} & \texttt{d7} & \texttt{17}\\
+\texttt{6d} & \texttt{08} & \texttt{d8} & \texttt{1b} & \texttt{16} & \texttt{b1} & \texttt{4e} & \texttt{51}\\
+\texttt{32} & \texttt{4e} & \texttt{8a} & \texttt{fc} & \texttt{5e} & \texttt{0d} & \texttt{08} & \texttt{ec}\\
+\texttt{8a} & \texttt{1e} & \texttt{32} & \texttt{53} & \texttt{36} & \texttt{cf} & \texttt{b3} & \texttt{22}\\
+\texttt{d8} & \texttt{b3} & \texttt{6d} & \texttt{04} & \texttt{43} & \texttt{ad} & \texttt{1e} & \texttt{f0}\\
+\texttt{72} & \texttt{5d} & \texttt{de} & \texttt{a9} & \texttt{49} & \texttt{c6} & \texttt{50} & \texttt{18}\\
+\texttt{84} & \texttt{50} & \texttt{6a} & \texttt{27} & \texttt{a6} & \texttt{0e} & \texttt{5d} & \texttt{3e}\\
+\end{tabular}
+\qquad
+\begin{tabular}{@{}cccccccc@{}}
+\multicolumn{8}{c}{$M^{-1}$}\\[2pt]
+\texttt{f1} & \texttt{a7} & \texttt{cf} & \texttt{26} & \texttt{40} & \texttt{46} & \texttt{f8} & \texttt{48}\\
+\texttt{36} & \texttt{69} & \texttt{5f} & \texttt{5b} & \texttt{d4} & \texttt{15} & \texttt{11} & \texttt{c7}\\
+\texttt{4d} & \texttt{b9} & \texttt{41} & \texttt{23} & \texttt{50} & \texttt{a3} & \texttt{55} & \texttt{92}\\
+\texttt{80} & \texttt{53} & \texttt{52} & \texttt{4d} & \texttt{f4} & \texttt{8b} & \texttt{31} & \texttt{19}\\
+\texttt{ed} & \texttt{73} & \texttt{15} & \texttt{f2} & \texttt{78} & \texttt{4f} & \texttt{aa} & \texttt{26}\\
+\texttt{99} & \texttt{ae} & \texttt{e0} & \texttt{09} & \texttt{6f} & \texttt{d6} & \texttt{1e} & \texttt{68}\\
+\texttt{e6} & \texttt{e2} & \texttt{05} & \texttt{06} & \texttt{d1} & \texttt{2e} & \texttt{74} & \texttt{a8}\\
+\texttt{2b} & \texttt{85} & \texttt{a1} & \texttt{97} & \texttt{df} & \texttt{11} & \texttt{f5} & \texttt{3e}\\
+\end{tabular}
+\end{center}
+% END MDS
+
+\paragraph{Padding constant} (bits $410..639$ of $L$, as an integer):
+\[
+  \mathit{pad} = \texttt{0x391d69042f080a4aa81f1dc9676116fafcd238b21e43a01e5fb06f0fe6}.
+\]
+
+\section{Test vectors (v1.1, hexadecimal)}\label{app:vectors}
+
+% BEGIN VECTORS
+\begin{center}\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\emph{Vector 1}}\\
+Key & $\hx{00}^{52}$ (52 zero bytes)\\
+Tweak & $\hx{00}^{16}$\\
+Plaintext & $\hx{00}^{64}$\\
+Ciphertext & \texttt{67b7e691273da3b40bedf3cf4abad7a3c960473b1ef4356d961413423c718053}\\ & \texttt{2fab02454f11cb600955edd094de6490024eb8f06f40d4f0d30443e004069d72}\\
+\midrule
+\multicolumn{2}{@{}l}{\emph{Vector 2}}\\
+Key & bytes $0..50$ equal to $0,1,\dots,50$ ($\hx{00}\,\hx{01}\cdots\hx{32}$), byte $51 = \hx{02}$\\
+Tweak & \texttt{000102030405060708090a0b0c0d0e0f}\\
+Plaintext & bytes $0..63$ equal to $0,1,\dots,63$ ($\hx{00}\,\hx{01}\cdots\hx{3f}$)\\
+Ciphertext & \texttt{9f52662ad01ba4bafe6fa894e81fd6b23fa22078bb5054587d09214cd8306ba1}\\ & \texttt{c3bf6167b07494d2d5f379c26b991a79403de492f4e310639917d33af96ada4c}\\
+\bottomrule
+\end{tabular}
+\end{center}
+% END VECTORS
+
+Twelve block-cipher vectors (with $\RK_0$ and $\RK_{16}$) and six BRI-410 AE vectors are in
+\texttt{publikim/reference/test\_vectors.json}.
+
+\section{The CP-SAT model}\label{app:cpsat}
+
+For rounds $t = 0,\dots,R$ and cells $c$, the binary variable $x_{t,c} \in \{0,1\}$ states that cell $c$ is active
+at the input of the S-layer of round $t+1$. For every round $t$ and row $q$, a binary variable $d_{t,q}$ marks the
+row as active, and every active input or output cell of the row implies $d_{t,q}$. A binary variable $s_t$ selects
+$d_r = +1$ or $d_r = -1$ in round $t$, so the solver chooses the worst case. The inputs of row $q$ of $\theta$ are
+the cells $(r,k)$ with $r + k\,d_r \equiv q \pmod 8$, and the constraint is
+\[
+  \sum_{(r,k):\; r + k d_r \equiv q} x_{t,(r,k)} \;+\; \sum_{k=0}^{7} x_{t+1,(q,k)} \;\ge\; 9\, d_{t,q} .
+\]
+The objective is
+\[
+  \min \sum_{t=0}^{R-1} \sum_{c} x_{t,c} \qquad \text{subject to} \qquad \sum_c x_{0,c} \ge 1 .
+\]
+The model of the schedule is the same, with 10 rows and the map $j \mapsto 9j \bmod 80$, and it starts from a
+non-zero difference in bytes $0..15$ (the tweak). Code: \texttt{matje/f4b\_milp.py}.
+
+\end{document}

@@ -8,7 +8,7 @@ Autori: **Rinald Cobaj**. Licenca: **CC0 1.0** (domen publik, shih `LICENSE`). B
 lojë e re për çdo bllok ("çdo lojë luhet vetëm një herë"), 16 raunde ("16 gurët e çdo lojtari"). Te v1.1, futja e numrit
 bëhet me 8 hapa dhe feed-forward (docs/F8_RAPORTI.md).
 
-**Punimi:** `publikim/paper/BRI-410_v2.pdf` (anglisht) dhe `BRI-410_v2_shqip.pdf` (shqip). **Historiku:** versioni v1.0 dhe punimi i
+**Punimi:** `publikim/paper/BRI-410_v2.1.pdf` (anglisht, LaTeX) dhe `BRI-410_v2_shqip.pdf` (shqip). **Historiku:** versioni v1.0 dhe punimi i
 parë (`BRI-410.pdf`) mbeten publikë me qëllim (etiketa git `v1.0`), sepse zbulimi dhe korrigjimi i dobësisë K janë pjesë e historisë
 shkencore të BRI-410.
 
@@ -40,8 +40,10 @@ Rregulli: numri i mesazhit nuk përsëritet kurrë me të njëjtin çelës. Pa `
 
 ## Paketa e publikimit
 
-- `publikim/paper/BRI-410_v2.pdf`: **punimi aktual** (versioni 2, anglisht), përshkruan BRI-410 v1.1 (burimi `BRI-410_v2.md`,
-  rindërtohet me `python ndertoj_pdf.py`)
+- `publikim/paper/BRI-410_v2.1.pdf`: **punimi aktual** (versioni 2.1, anglisht), përshkruan BRI-410 v1.1. Përmbajtja është e
+  njëjtë me versionin 2, por është shtypur me LaTeX dhe ka në faqen e parë deklaratën për AI-në që kërkon IACR-ja (burimi
+  `BRI-410_v2.1.tex`; shtojcat gjenerohen nga kodi me `python publikim/paper/gjenero_shtojcat_tex.py`; ndërtohet me `pdflatex`)
+- `publikim/paper/BRI-410_v2.pdf`: versioni 2 (burimi `BRI-410_v2.md`, rindërtohet me `python ndertoj_pdf.py`)
 - `publikim/paper/BRI-410_v2_shqip.pdf`: përkthimi shqip i punimit v2 (versioni për publikim është ai anglisht)
 - `publikim/paper/BRI-410.pdf`: punimi i parë (versioni 1, 5 faqe), përshkruan BRI-410 v1.0; është PDF-ja e dorëzuar në IACR ePrint
   më 22.10.2026, e ruajtur pa ndryshime (rindërtohet me `python ndertoj_pdf.py v1`)

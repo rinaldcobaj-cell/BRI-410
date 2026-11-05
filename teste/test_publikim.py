@@ -57,6 +57,21 @@ class TestPunimiV2PerputhetMeKodin(unittest.TestCase):
             kriptuar = ["".join(m) for m in re.findall(r"=\s*([0-9a-f]{64})\s*\n\s*([0-9a-f]{64})", blloqet[2])]
             self.assertEqual(kriptuar, pritur, emri)
 
+        # Versioni 2.1 (LaTeX): shtojcat midis shënjuesve "% BEGIN X" / "% END X".
+        tex = (_DOSJA.parent / "paper" / "BRI-410_v2.1.tex").read_text(encoding="utf-8")
+
+        def pjesa(emri: str) -> str:
+            return tex[tex.index(f"% BEGIN {emri}"):tex.index(f"% END {emri}")]
+
+        bajtet = [int(h, 16) for h in re.findall(r"\\texttt\{([0-9a-f]{2})\}", pjesa("SBOX"))]
+        self.assertEqual(bajtet, sbox8.SBOX)
+        bajtet = [int(h, 16) for h in re.findall(r"\\texttt\{([0-9a-f]{2})\}", pjesa("MDS"))]
+        self.assertEqual([bajtet[8 * i:8 * i + 8] for i in range(8)], mds8.M)
+        self.assertEqual([bajtet[64 + 8 * i:64 + 8 * i + 8] for i in range(8)], mds8.M_INV)
+        self.assertIn(r"\mathit{pad} = \texttt{%s}" % hex(bri8._MBUSHJA), tex)
+        rreshtat = re.findall(r"\\texttt\{([0-9a-f]{64})\}", pjesa("VECTORS"))
+        self.assertEqual([rreshtat[0] + rreshtat[1], rreshtat[2] + rreshtat[3]], pritur)
+
 
 if __name__ == "__main__":
     unittest.main()

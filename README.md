@@ -20,9 +20,11 @@ Author: **Rinald Cobaj** (vlorarino@gmail.com) · License: **CC0 1.0** (public d
 
 ## Start here
 
-- **Paper (version 2, describes v1.1):** [`publikim/paper/BRI-410_v2.pdf`](publikim/paper/BRI-410_v2.pdf). It contains the specification,
-  proofs, experiments in five categories, the design history with all negative results, security conjectures and open problems.
-  Every statement is labelled as a proof, computation, experiment, estimate, conjecture or open question.
+- **Paper (version 2.1, describes v1.1):** [`publikim/paper/BRI-410_v2.1.pdf`](publikim/paper/BRI-410_v2.1.pdf) (LaTeX source
+  `BRI-410_v2.1.tex`). It contains the specification, proofs, experiments in five categories, the design history with all negative
+  results, security conjectures and open problems. Every statement is labelled as a proof, computation, experiment, estimate,
+  conjecture or open question. Version 2.1 has the same content as version 2 (`BRI-410_v2.pdf`), typeset in LaTeX and with the
+  AI-use statement required by the IACR policy on the first page.
 - **Reference implementation:** [`publikim/reference/bri410.py`](publikim/reference/bri410.py). A single file that uses only the
   Python standard library.
 - **Test vectors:** `publikim/reference/test_vectors.json`. To check them:
